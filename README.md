@@ -1,4 +1,4 @@
-# music-box
+# music-box (backend)
 
 ## 运行前须知
 1. 需要在/src/main/resources下追新增一个文件: application-dev.yaml
