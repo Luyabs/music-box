@@ -1,29 +1,30 @@
 use music_box;
 
 create table abstract_user (
-                               id bigint primary key ,
-                               username varchar(80) unique ,
-                               password varchar(80) not null
-
+    id bigint primary key ,
+    username varchar(80) unique ,
+    password varchar(80) not null,
+    create_time datetime,
+    update_time datetime
 );
 
 create table user (
-                      id bigint primary key ,
-                      nickname varchar(80) unique ,
-                      avatar varchar(120) ,
-                      gender varchar(5) check ( gender in ('f', 'm', 'none') ),
-                      region varchar(50) ,
-                      signature varchar(80) ,
-                      profession varchar(80) ,
-
-                      local_downloading_directory varchar(120),
-
-                      status int default 0,
-                      is_creator bool default false,
-                      is_vip bool default false,
-
-                      foreign key (id) references abstract_user(id)
+    id bigint primary key ,
+    nickname varchar(80) unique ,
+    avatar varchar(120) ,
+    gender varchar(5),
+    region varchar(50) ,
+    signature varchar(80) ,
+    profession varchar(80) ,
+    local_downloading_directory varchar(120),
+    status int default 0,
+    is_creator bool default false,
+    is_vip bool default false,
+    create_time datetime,
+    update_time datetime,
+    foreign key (id) references abstract_user(id)
 );
+
 create table creator(
     id bigint primary key ,                     #创作者id
     creator_introduction varchar(500),          #创作者简介
@@ -40,7 +41,7 @@ create table creator(
 
 create table song_menu(
     id bigint primary key ,                 #歌单id
-    status int default 0,                   #歌单状态
+    authority int default 0,                #歌单权限
     menu_name varchar(50),                  #歌单名
     menu_introduction varchar(200),         #歌单简介
     is_album bool default false,            #是否专辑
