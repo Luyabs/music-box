@@ -50,6 +50,7 @@ create table song_menu(
     update_time datetime,
     foreign key (user_id) references abstract_user(id)
 );
+
 create table album(
     id bigint primary key ,             #专辑id
     album_introduction varchar(200),    #专辑简介

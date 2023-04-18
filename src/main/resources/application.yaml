@@ -12,7 +12,7 @@ spring:
 
 mybatis-plus:
   configuration:
-    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # running log
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # running log
     map-underscore-to-camel-case: true  # Mapping: phone_number => phoneNumber
 
   global-config:
