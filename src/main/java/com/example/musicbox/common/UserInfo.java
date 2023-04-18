@@ -6,11 +6,11 @@ package com.example.musicbox.common;
 public class UserInfo {
     private static final ThreadLocal<Integer> userThreadLocal = new ThreadLocal<>();
 
-    public static void set(int userId){
+    public static void set(Integer userId){
         userThreadLocal.set(userId);
     }
 
-    public static int get(){
+    public static Integer get(){
         return userThreadLocal.get();
     }
 

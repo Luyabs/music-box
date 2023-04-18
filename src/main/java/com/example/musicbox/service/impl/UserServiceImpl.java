@@ -1,6 +1,7 @@
 package com.example.musicbox.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.musicbox.entity.AbstractUser;
 import com.example.musicbox.entity.User;
 import com.example.musicbox.mapper.AbstractUserMapper;
 import com.example.musicbox.mapper.UserMapper;
@@ -15,4 +16,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private UserMapper userMapper;
+
+    @Override
+    public int abstractUserSave(AbstractUser abstractUser) {
+        return abstractUserMapper.insert(abstractUser);
+    }
 }

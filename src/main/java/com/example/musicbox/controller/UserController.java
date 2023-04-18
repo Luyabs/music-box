@@ -18,14 +18,14 @@ public class UserController {
         return Result.success().data("list", userService.list());
     }
 
-    @PostMapping("/hello")
+    @PostMapping("/1")
     public Result hello1(@RequestBody User user) {
         return Result.success().data("user", user);
     }
 
-    @PostMapping("/abs")
-    public Result hello2(@RequestBody AbstractUser abstractUser) {
-        System.out.println(abstractUser);
-        return Result.success().data("abstract", abstractUser);
+    @PostMapping("/add")
+    public Result add(@RequestBody AbstractUser abstractUser) {
+        userService.abstractUserSave(abstractUser);
+        return Result.success().message("保存成功");
     }
 }
