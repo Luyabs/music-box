@@ -15,15 +15,15 @@ public class AutoFillMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         metaObject.setValue("createTime", LocalDateTime.now());
-        if (UserInfo.get() != null)
-            metaObject.setValue("createUser", UserInfo.get());
+//        if (UserInfo.get() != null)
+//            metaObject.setValue("createUser", UserInfo.get());
         updateFill(metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         metaObject.setValue("updateTime", LocalDateTime.now());
-        if (UserInfo.get() != null)
-            metaObject.setValue("updateUser", UserInfo.get());
+//        if (UserInfo.get() != null)
+//            metaObject.setValue("updateUser", UserInfo.get());
     }
 }

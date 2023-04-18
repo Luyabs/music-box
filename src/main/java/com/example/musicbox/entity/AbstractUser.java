@@ -27,15 +27,7 @@ public class AbstractUser {
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @ApiModelProperty("创建者id")
-    @TableField(fill = FieldFill.INSERT)
-    private Long createUser;
-
     @ApiModelProperty("更新时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
-
-    @ApiModelProperty("更新者id")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Long updateUser;
 }
