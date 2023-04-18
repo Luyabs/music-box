@@ -25,29 +25,36 @@ create table user (
                       foreign key (id) references abstract_user(id)
 );
 create table creator(
-    id bigint primary key ,
-    creator_introduction varchar(500),
-    stage_name varchar(20),
-    Representative_work varchar(500),
+    id bigint primary key ,                     #创作者id
+    creator_introduction varchar(500),          #创作者简介
+    stage_name varchar(20),                     #艺名/曾用名
+    representative_work varchar(500),           #代表作
+    performing_experience varchar(500),         #演艺经历
+    major_achievement varchar(500),             #主要成就
+    brokerage_company varchar(50),              #经纪公司
+    create_time datetime,
+    update_time datetime,
     foreign key (id) references abstract_user(id)
 
 );
-create table songmenu(
-    id bigint primary key ,
-    status int default 0,
-    menu_name varchar(50),
-    menu_introduction varchar(200),
-    is_album bool default false,
-    create_user bigint,
-    create_time datetime,
 
-    foreign key (create_user) references abstract_user(id)
+create table song_menu(
+    id bigint primary key ,                 #歌单id
+    status int default 0,                   #歌单状态
+    menu_name varchar(50),                  #歌单名
+    menu_introduction varchar(200),         #歌单简介
+    is_album bool default false,            #是否专辑
+    user_id bigint,                         #建立者id
+    create_time datetime,
+    update_time datetime,
+    foreign key (user_id) references abstract_user(id)
 );
 create table album(
-    id bigint primary key ,
-    album_introduction varchar(200),
-    issue_company varchar(50),
-    create_user bigint,
+    id bigint primary key ,             #专辑id
+    album_introduction varchar(200),    #专辑简介
+    issue_company varchar(50),          #发行公司
+    issue_time datetime,                #发行时间
     create_time datetime,
-    foreign key (id) references songmenu(id)
+    update_time datetime,
+    foreign key (id) references song_menu(id)
 );
