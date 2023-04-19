@@ -28,15 +28,16 @@ spring:
 | …              | …                         | ServiceException       | 自定义业务层异常类       | service层抛掷用异常                                                   |
 | …              | \interceptor              |                        |                 |                                                                 |
 | …              | …                         | JwtInterceptor         | JWT拦截器          | 预处理请求中的token，并通过UserInfo从token中解析出userId存到UserInfo.threadLocal中 |
-| …              | …                         | Knife4jInterceptor         | K4J拦截器          | 在非dev环境下拦截所有对api文档的请求 |
+| …              | …                         | Knife4jInterceptor         | K4J拦截器          | 在非dev环境下拦截所有对api文档的请求                                           |
 | …              | AutoFillMetaObjectHandler |                        | 元数据处理器          | MybatisPlus 填充公共字段                                              |
 | …              | JwtUtils                  |                        | Token生成器        | 生成与解析token                                                      |
 | …              | Result                    |                        | 数据一致性处理         | 返回统一格式                                                          |
 | …              | UserInfo                  |                        | 封装线程副本工具类       | 在处理token时保存一份userId到此类中                                         |
 |                |                           |                        |                 |                                                                 |
-| \config        | 配置层                       |                        |                 |                                                                 |
+| \config        | 配置层(配置/提供Bean)            |                        |                 |                                                                 |
 | …              | Knife4jConfig             |                        | API文档配置类        | 配置Knife4j api文档                                                 |
 | …              | MybatisPlusConfig         |                        | Mybatis分页拦截器配置类 | 配置Mybatis分页查询功能                                                 |
+| …              | RestTemplateConfig        |                        | RestTemplate类   | 负责Http请求                                                        |
 | …              | WebMvcConfig              |                        | MVC配置类          | 配置静态资源映射 跨域映射 拦截器配置 序列化处理                                       |
 |                |                           |                        |                 |                                                                 |
 |                |                           |                        |                 |                                                                 |

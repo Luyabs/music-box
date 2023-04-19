@@ -22,6 +22,10 @@ public class Result {
     @ApiModelProperty("响应数据")
     private Map<String, Object> data = new HashMap<>();
 
+    public Result() {
+    }
+
+
     private Result(boolean success, String message) {
         this.success = success;
         this.message = message;
