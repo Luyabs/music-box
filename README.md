@@ -25,6 +25,7 @@ spring:
 | …              | …                         | ServiceException       | 自定义业务层异常类       | service层抛掷用异常                                                   |
 | …              | \interceptor              |                        |                 |                                                                 |
 | …              | …                         | JwtInterceptor         | JWT拦截器          | 预处理请求中的token，并通过UserInfo从token中解析出userId存到UserInfo.threadLocal中 |
+| …              | …                         | Knife4jInterceptor         | K4J拦截器          | 在非dev环境下拦截所有对api文档的请求 |
 | …              | AutoFillMetaObjectHandler |                        | 元数据处理器          | MybatisPlus 填充公共字段                                              |
 | …              | JwtUtils                  |                        | Token生成器        | 生成与解析token                                                      |
 | …              | Result                    |                        | 数据一致性处理         | 返回统一格式                                                          |
