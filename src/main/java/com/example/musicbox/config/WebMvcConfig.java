@@ -1,6 +1,7 @@
 package com.example.musicbox.config;
 
 import com.example.musicbox.common.interceptor.JwtInterceptor;
+import com.example.musicbox.common.interceptor.Knife4jInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -30,7 +31,7 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Value("${spring.profiles.active}")
-    private String environment;  // 仅开发环境下关闭JWT拦截器
+    private String environment;  // 仅开发环境下开启API文档
 
     /**
      * 设置静态资源映射
@@ -63,16 +64,18 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
      */
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        if (!environment.equals("dev")) {  // 开发环境关闭JWT拦截器 以方便knife4j文档不带token的使用
-            registry.addInterceptor(new JwtInterceptor())
-                    .addPathPatterns("/**")
-                    .excludePathPatterns("/user/login", "/user/info", "/user/logout");
-        }
+        if (!environment.equals("dev"))   // 非开发环境下拦截knife4j api文档
+            registry.addInterceptor(new Knife4jInterceptor())
+                    .addPathPatterns("/doc.html");
+
+        registry.addInterceptor(new JwtInterceptor())   // 访问指定URL需要携带token
+                .addPathPatterns("/12345")      // TODO: 增加拦截路径
+                .excludePathPatterns("/user/login", "/user/info", "/user/logout");
+
     }
 
     /**
      * 过长的数据类型在JSON中转换成String
-     * @param converters
      */
     @Override
     protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

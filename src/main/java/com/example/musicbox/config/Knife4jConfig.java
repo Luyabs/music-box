@@ -15,7 +15,6 @@ import springfox.documentation.spring.web.plugins.Docket;
  */
 @Configuration
 public class Knife4jConfig {
-
     @Bean(value = "defaultApi2")
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)

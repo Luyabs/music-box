@@ -1,6 +1,6 @@
 package com.example.musicbox.common.interceptor;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.example.musicbox.common.JwtUtils;
 import com.example.musicbox.common.Result;
 import com.example.musicbox.common.UserInfo;
@@ -27,6 +27,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             UserInfo.set(userId);   // 写入userId到线程副本
         } catch (Exception e) {     // 拦截异常token 多半是空token或错误token
             log.error(e.getMessage());
+            response.setStatus(401);
             response.getWriter().write(JSON.toJSONString(Result.error().message(e.getMessage())));
             return false;
         }
@@ -34,12 +35,12 @@ public class JwtInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
 
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 
     }
 }
