@@ -1,5 +1,7 @@
 package com.example.musicbox.common;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -9,12 +11,16 @@ import java.util.Map;
  * 数据一致性
  */
 @Data
+@ApiModel("{success, message, data}")
 public class Result {
-    private boolean success;    // 成功
+    @ApiModelProperty("本次请求是否成功")
+    private boolean success;
 
-    private String message;     // 提示信息
+    @ApiModelProperty("提示信息")
+    private String message;
 
-    private Map<String, Object> data = new HashMap<>();     // 数据
+    @ApiModelProperty("响应数据")
+    private Map<String, Object> data = new HashMap<>();
 
     private Result(boolean success, String message) {
         this.success = success;

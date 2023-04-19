@@ -1,5 +1,8 @@
 # music-box (backend)
 
+## Api文档路径
+http://localhost:8080/doc.html      
+
 ## 运行前须知
 1. 需要在/src/main/resources下追新增一个文件: application-dev.yaml
 2. 在这个文件中追加下面这段代码 并修改数据库信息
