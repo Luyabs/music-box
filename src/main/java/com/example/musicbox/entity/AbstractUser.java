@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "抽象用户", description = "abstract_user")
 public class AbstractUser {
     @ApiModelProperty("用户id")

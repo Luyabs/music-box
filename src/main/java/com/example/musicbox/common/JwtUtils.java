@@ -11,10 +11,10 @@ import java.util.Date;
  * JWT: token
  */
 public class JwtUtils {
-    //7天过期
-    private static long expire = 604800;
-    //32位秘钥
-    private static String secret = "asj123saASDuo18v4SAD3A81d9iia90FXia18D1d23ads";
+    //12小时过期
+    private final static long expire = 43200;
+    //秘钥
+    private final static String secret = "asjSADo18v4SA#D3A8_1d@9iFSAdaFi12a+90FXia1!8D1d23ads";
 
     //生成token
     public static String generateToken(String str) {

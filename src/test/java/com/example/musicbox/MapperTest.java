@@ -42,14 +42,14 @@ public class MapperTest {
 
     @Test
     void mapperTest() {
-//        abstractUserMapper.selectList(null);
-//        albumMapper.selectList(null);
-//        creatorMapper.selectList(null);
-//        songMenuMapper.selectList(null);
-//        userMapper.selectList(null);
-//        administratorMapper.selectList(null);
-//        postMapper.selectList(null);
-//        songMapper.selectList(null);
+        abstractUserMapper.selectList(null);
+        albumMapper.selectList(null);
+        creatorMapper.selectList(null);
+        songMenuMapper.selectList(null);
+        userMapper.selectList(null);
+        administratorMapper.selectList(null);
+        postMapper.selectList(null);
+        songMapper.selectList(null);
         songCommentMapper.selectList(null);
         songMenuCompositionMapper.selectList(null);
         songPlayRecordMapper.selectList(null);

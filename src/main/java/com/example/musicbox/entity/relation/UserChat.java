@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "用户聊天记录", description = "用户与用户多对多的聊天关系")
 @TableName("chat_user")
 public class UserChat {

@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "创作者", description = "继承自user")
 public class Creator {
     @ApiModelProperty("用户id")

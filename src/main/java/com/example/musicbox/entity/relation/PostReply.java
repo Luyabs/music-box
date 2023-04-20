@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "帖子回复记录", description = "帖子与用户多对多的回复关系")
 @TableName("reply_user_post")
 public class PostReply {

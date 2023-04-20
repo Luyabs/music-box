@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "歌单组成", description = "歌曲与歌单多对多的组成关系")
 @TableName("composition_song_menu_song")
 public class SongMenuComposition {

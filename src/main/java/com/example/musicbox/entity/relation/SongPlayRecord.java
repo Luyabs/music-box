@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "用户歌曲播放记录", description = "用户与歌曲多对多的播放关系")
 @TableName("playback_record_user_song")
 public class SongPlayRecord {

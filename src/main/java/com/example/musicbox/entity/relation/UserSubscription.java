@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "用户关注记录", description = "用户与用户多对多的关注关系")
 @TableName("subscription_user")
 public class UserSubscription {

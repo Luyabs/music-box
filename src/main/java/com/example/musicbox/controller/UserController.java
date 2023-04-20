@@ -5,10 +5,7 @@ import com.example.musicbox.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Api("用户信息")
@@ -26,8 +23,8 @@ public class UserController {
 
     @ApiOperation(value = "解析token", notes = "通过token获取用户id")
     @PostMapping("/info")
-    public Result info(String token) {
-        int userId = userService.parseToken(token);
+    public Result info(@RequestParam String token) {
+        long userId = userService.parseToken(token);
         return Result.success().data("user_id", userId);
     }
 
@@ -39,7 +36,7 @@ public class UserController {
 
     @ApiOperation(value = "注册", notes = "使用用户名 + 密码进行注册")
     @PostMapping("/register")
-    public Result register(String username, String password) {
+    public Result register(@RequestParam String username, String password) {
         String token = userService.register(username, password);
         return Result.success().data("token", token);
     }

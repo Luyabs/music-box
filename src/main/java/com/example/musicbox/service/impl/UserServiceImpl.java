@@ -41,9 +41,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public int parseToken(String token) {
+    public long parseToken(String token) {
         try {
-            return Integer.parseInt(JwtUtils.decodeByToken(token));
+            return Long.parseLong(JwtUtils.decodeByToken(token));
         } catch (Exception ex) {
             throw new ServiceException(ex.getMessage());
         }
@@ -51,16 +51,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String register(String username, String password) {
+        if (username == null)
+            throw new ServiceException("用户名不能为空");
         if (abstractUserMapper.exists(new QueryWrapper<AbstractUser>().eq("username", username)))
             throw new ServiceException("用户名已存在");
-        AbstractUser registerUser = new AbstractUser();
-        registerUser.setUsername(username);
-        registerUser.setPassword(password);
-        abstractUserMapper.insert(registerUser);
+        if (password.length() < 6)
+            throw new ServiceException("密码需要大于6位");
 
-        User registerUserDetail = new User();
-        registerUserDetail.setId(registerUser.getId());
-        userMapper.insert(registerUserDetail);
+        AbstractUser registerUser = new AbstractUser().setUsername(username).setPassword(password);
+        abstractUserMapper.insert(registerUser);
+        userMapper.insert(new User().setId(registerUser.getId()));
 
         return JwtUtils.generateToken(registerUser.getId().toString());     // 把用户id生成token
     }
