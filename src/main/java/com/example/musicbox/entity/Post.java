@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 @ApiModel("帖子")
 public class Post {
    @ApiModelProperty("帖子id")
