@@ -88,4 +88,77 @@ create table post(
     update_time datetime,
     foreign key (user_id) references abstract_user(id)
 );
+#用户收藏歌单
+create table collection_user_song_menu(
+    id bigint primary key ,                 #id
+    user_id bigint,                         #用户ID
+    song_menu_id bigint,                    #歌单id
+    create_time datetime,
+    update_time datetime,
+    foreign key (user_id) references abstract_user(id),
+    foreign key (song_menu_id) references song_menu(id)
+);
+#歌曲组成歌单
+create table composition_song_menu_song(
+    id bigint primary key ,                 #id
+    song_menu_id bigint,                    #歌单id
+    song_id bigint,                         #歌曲ID
+    song_priority bigint,                   #歌曲优先级
+    create_time datetime,
+    update_time datetime,
+    foreign key (song_menu_id) references song_menu (id),
+    foreign key (song_id) references song (id)
+);
+create table comment_user_song(
+    id bigint primary key ,                 #id
+    user_id bigint,                         #用户ID
+    song_id bigint,                         #歌曲id
+    comments_content varchar(500),          #评论内容
+    status int default 0,                   #评论状态
+    create_time datetime,
+    update_time datetime,
+    foreign key (user_id) references abstract_user(id),
+    foreign key (song_id) references song (id)
+);
+create table playback_record_user_song(
+    id bigint primary key ,                 #id
+    user_id bigint,                         #用户ID
+    song_id bigint,                         #歌曲id
+    status int default 0,                   #播放状态
+    create_time datetime,
+    update_time datetime,
+    foreign key (user_id) references abstract_user(id),
+    foreign key (song_id) references song (id)
+);
+
+create table subscription_user(
+    id bigint primary key ,                 #id
+    follower_id bigint,                     #关注者id
+    followed_id bigint,                     #被关注者id
+    create_time datetime,
+    update_time datetime,
+    foreign key (follower_id) references abstract_user(id),
+    foreign key (followed_id) references abstract_user(id)
+);
+create table reply_user_post(
+    id bigint primary key ,                 #id
+    post_id bigint,                         #帖子id
+    reply_user_id bigint,                   #回复用户ID
+    comments_content varchar(500),          #回复内容
+    status int default 0,                   #回复状态
+    create_time datetime,
+    update_time datetime,
+    foreign key (reply_user_id) references abstract_user(id),
+    foreign key (post_id) references post(id)
+);
+create table chat_abstract_user(
+    id bigint primary key ,                 #id
+    sender_id bigint,                       #发送者id
+    receiver_id bigint,                     #接受者id
+    is_administrator_involved bool default false,   #是否有管理员参与
+    chat_content varchar(200),              #发送内容
+    status int default 0,                   #聊天状态
+    foreign key (sender_id) references abstract_user(id),
+    foreign key (receiver_id) references abstract_user(id)
+);
 
