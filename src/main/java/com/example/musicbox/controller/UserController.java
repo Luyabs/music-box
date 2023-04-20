@@ -23,7 +23,7 @@ public class UserController {
 
     @ApiOperation(value = "解析token", notes = "通过token获取用户id")
     @PostMapping("/info")
-    public Result info(@RequestParam String token) {
+    public Result info(String token) {
         long userId = userService.parseToken(token);
         return Result.success().data("user_id", userId);
     }
@@ -36,7 +36,7 @@ public class UserController {
 
     @ApiOperation(value = "注册", notes = "使用用户名 + 密码进行注册")
     @PostMapping("/register")
-    public Result register(@RequestParam String username, String password) {
+    public Result register(String username, String password) {
         String token = userService.register(username, password);
         return Result.success().data("token", token);
     }
