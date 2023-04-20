@@ -37,7 +37,7 @@ public class User {
     @ApiModelProperty("本地下载目录")
     private String localDownloadingDirectory;
 
-    @ApiModelProperty("状态")
+    @ApiModelProperty("状态 0: 正常 1: 封禁")
     private Integer status;
 
     @ApiModelProperty("是否为创作者")
