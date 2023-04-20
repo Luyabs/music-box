@@ -3,6 +3,7 @@ package com.example.musicbox.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.JwtUtils;
+import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.AbstractUser;
 import com.example.musicbox.entity.User;
@@ -13,8 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
@@ -41,17 +44,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public long parseToken(String token) {
-        try {
-            return Long.parseLong(JwtUtils.decodeByToken(token));
-        } catch (Exception ex) {
-            throw new ServiceException(ex.getMessage());
-        }
-    }
-
-    @Override
     public String register(String username, String password) {
-        if (username == null)
+        if (username.equals(""))
             throw new ServiceException("用户名不能为空");
         if (abstractUserMapper.exists(new QueryWrapper<AbstractUser>().eq("username", username)))
             throw new ServiceException("用户名已存在");
@@ -63,5 +57,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.insert(new User().setId(registerUser.getId()));
 
         return JwtUtils.generateToken(registerUser.getId().toString());     // 把用户id生成token
+    }
+
+    @Override
+    public long parseToken(String token) {
+        try {
+            return Long.parseLong(JwtUtils.decodeByToken(token));
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new ServiceException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public Map<String, Object> getUserDetailedInfo() {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            long userId = UserInfo.get();   // 通过token获取用户id
+            AbstractUser user = abstractUserMapper.selectById(userId);
+            User userDetail = userMapper.selectById(userId);
+            map.put("user_id", userId);
+            map.put("username", user.getUsername());
+            map.put("_detailed_info", userDetail);
+            return map;
+        } catch (Exception ex) {
+            throw new ServiceException(ex.getMessage());
+        }
     }
 }

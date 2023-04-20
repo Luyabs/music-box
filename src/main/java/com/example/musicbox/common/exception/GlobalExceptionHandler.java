@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({ServiceException.class})
     private Result customException(RuntimeException ex) {
+        ex.printStackTrace();
         log.error(ex.getMessage());
         return Result.error().message(ex.getMessage());
     }

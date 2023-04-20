@@ -21,9 +21,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String token = request.getHeader("X-Token");
+        String token = request.getHeader("token");
         try {
-            int userId = Integer.parseInt(JwtUtils.decodeByToken(token));
+            long userId = Long.parseLong(JwtUtils.decodeByToken(token));
             UserInfo.set(userId);   // 写入userId到线程副本
         } catch (Exception e) {     // 拦截异常token 多半是空token或错误token
             log.error(e.getMessage());
