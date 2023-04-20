@@ -1,5 +1,6 @@
 package com.example.musicbox.controller;
 
+import com.example.musicbox.common.NeedToken;
 import com.example.musicbox.common.Result;
 import com.example.musicbox.service.UserService;
 import io.swagger.annotations.Api;
@@ -55,6 +56,7 @@ public class UserController {
 
     @ApiOperation(value = "获取用户详细信息", notes = "[需要请求头带token]通过token获取用户个人信息")
     @GetMapping("/detailed_info")
+    @NeedToken
     public Result getUserDetailedInfo() {
         Map<String, Object> info = userService.getUserDetailedInfo();
         return Result.success().data(info);

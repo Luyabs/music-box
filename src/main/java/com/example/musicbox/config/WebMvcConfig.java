@@ -69,8 +69,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                     .addPathPatterns("/doc.html");
 
         registry.addInterceptor(new JwtInterceptor())   // 访问指定URL需要携带token
-                .addPathPatterns("/user/detailed_info")      // TODO: 增加拦截路径
-                .excludePathPatterns("/user/login", "/user/logout", "/user/register", "/user/info");
+                .addPathPatterns("/**")      // TODO: 增加拦截路径
+                .excludePathPatterns();
 
     }
 
