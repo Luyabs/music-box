@@ -9,8 +9,11 @@ import com.example.musicbox.entity.User;
 import com.example.musicbox.mapper.AbstractUserMapper;
 import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+@Slf4j
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -34,8 +37,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (targetUserDetail.getStatus() == 1)      // 状态:1 代表封禁状态
             throw new ServiceException("用户处于封禁状态");
 
-        String token = JwtUtils.generateToken(targetUser.getId().toString());// 把用户id生成token
-        return token;
+        return JwtUtils.generateToken(targetUser.getId().toString());   // 把用户id生成token
     }
 
     @Override
@@ -48,7 +50,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public int abstractUserSave(AbstractUser abstractUser) {
-        return abstractUserMapper.insert(abstractUser);
+    public String register(String username, String password) {
+        if (abstractUserMapper.exists(new QueryWrapper<AbstractUser>().eq("username", username)))
+            throw new ServiceException("用户名已存在");
+        AbstractUser registerUser = new AbstractUser();
+        registerUser.setUsername(username);
+        registerUser.setPassword(password);
+        abstractUserMapper.insert(registerUser);
+
+        User registerUserDetail = new User();
+        registerUserDetail.setId(registerUser.getId());
+        userMapper.insert(registerUserDetail);
+
+        return JwtUtils.generateToken(registerUser.getId().toString());     // 把用户id生成token
     }
 }

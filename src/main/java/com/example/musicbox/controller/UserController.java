@@ -37,6 +37,13 @@ public class UserController {
         return Result.success().message("登出成功");
     }
 
+    @ApiOperation(value = "注册", notes = "使用用户名 + 密码进行注册")
+    @PostMapping("/register")
+    public Result register(String username, String password) {
+        String token = userService.register(username, password);
+        return Result.success().data("token", token);
+    }
+
     @ApiOperation("获取全部用户数据")
     @GetMapping("/all")
     public Result getAll() {

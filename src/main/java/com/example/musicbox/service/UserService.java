@@ -1,7 +1,6 @@
 package com.example.musicbox.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.musicbox.entity.AbstractUser;
 import com.example.musicbox.entity.User;
 
 public interface UserService extends IService<User> {
@@ -9,6 +8,6 @@ public interface UserService extends IService<User> {
 
     int parseToken(String token);   // 解析token
 
-    int abstractUserSave(AbstractUser abstractUser);
+    String register(String username, String password);    // 注册
 
 }
