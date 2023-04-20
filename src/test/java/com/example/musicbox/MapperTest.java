@@ -10,6 +10,8 @@ public class MapperTest {
     @Autowired
     private AbstractUserMapper abstractUserMapper;
     @Autowired
+    private AdministratorMapper administratorMapper;
+    @Autowired
     private AlbumMapper albumMapper;
     @Autowired
     private CreatorMapper creatorMapper;
@@ -17,13 +19,20 @@ public class MapperTest {
     private SongMenuMapper songMenuMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PostMapper postMapper;
+    @Autowired
+    private SongMapper songMapper;
 
     @Test
     void mapperTest() {
-        abstractUserMapper.selectList(null);
-        albumMapper.selectList(null);
-        creatorMapper.selectList(null);
-        songMenuMapper.selectList(null);
-        userMapper.selectList(null);
+//        abstractUserMapper.selectList(null);
+//        albumMapper.selectList(null);
+//        creatorMapper.selectList(null);
+//        songMenuMapper.selectList(null);
+//        userMapper.selectList(null);
+        administratorMapper.selectList(null);
+        postMapper.selectList(null);
+        songMapper.selectList(null);
     }
 }

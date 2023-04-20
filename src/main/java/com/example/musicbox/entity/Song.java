@@ -16,17 +16,17 @@ public class Song {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     @ApiModelProperty("创建者id")
-    private Long user_id;
+    private Long userId;
     @ApiModelProperty("歌曲封面")
-    private String cover_picture;
+    private String coverPicture;
     @ApiModelProperty("歌曲名")
-    private String singer_name;
+    private String singerName;
     @ApiModelProperty("歌手名")
-    private String song_name;
+    private String songName;
     @ApiModelProperty("歌曲状态")
     private Integer status;
     @ApiModelProperty("歌曲发布时间")
-    private LocalDateTime issue_time;
+    private LocalDateTime issueTime;
     @ApiModelProperty("歌曲语言")
     private String language;
     @ApiModelProperty("歌曲分类")

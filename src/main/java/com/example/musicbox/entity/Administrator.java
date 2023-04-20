@@ -1,30 +1,23 @@
 package com.example.musicbox.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@ApiModel("帖子")
-public class Post {
-   @ApiModelProperty("帖子id")
-   @TableId(type = IdType.ASSIGN_ID)
+@Data
+@ApiModel(value = "管理员", description = "继承自abstract_user")
+public class Administrator {
+    @ApiModelProperty("用户id")
+    @TableId
     private Long id;
 
-   @ApiModelProperty("帖子创建者id")
-    private Long userId;
-
-   @ApiModelProperty("帖子状态")
-    private Integer status ;
-
-   @ApiModelProperty("帖子主题")
-    private Integer subject ;
+    @ApiModelProperty("权限等级")
+    private Integer authorityLevel;
 
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
