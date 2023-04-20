@@ -158,6 +158,8 @@ create table chat_abstract_user(
     is_administrator_involved bool default false,   #是否有管理员参与
     chat_content varchar(200),              #发送内容
     status int default 0,                   #聊天状态
+    create_time datetime,
+    update_time datetime,
     foreign key (sender_id) references abstract_user(id),
     foreign key (receiver_id) references abstract_user(id)
 );

@@ -36,6 +36,8 @@ public class MapperTest {
     private UserSubscriptionMapper userSubscriptionMapper;
     @Autowired
     private PostReplyMapper postReplyMapper;
+    @Autowired
+    private UserChatMapper userChatMapper;
 
 
     @Test
@@ -54,5 +56,6 @@ public class MapperTest {
         userMenuCollectionMapper.selectList(null);
         userSubscriptionMapper.selectList(null);
         postReplyMapper.selectList(null);
+        userChatMapper.selectList(null);
     }
 }
