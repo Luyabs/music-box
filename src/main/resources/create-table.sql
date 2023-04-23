@@ -49,6 +49,7 @@ create table song(
     id bigint primary key ,                 #歌曲id
     user_id bigint,                         #建立者id
     cover_picture varchar(200),             #创作者id
+    file_directory varchar(200),            #本地保存路径
     singer_name varchar(50),                #歌手名
     song_name varchar(50),                  #歌曲名
     status int default 0,                  #审核状态
