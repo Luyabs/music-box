@@ -22,6 +22,9 @@ public class Song {
     @ApiModelProperty("创建者id")
     private Long userId;
 
+    @ApiModelProperty("文件所在目录")
+    private String fileDirectory;
+
     @ApiModelProperty("歌曲封面")
     private String coverPicture;
 

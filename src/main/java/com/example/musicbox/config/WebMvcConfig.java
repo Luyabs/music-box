@@ -64,7 +64,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
      */
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        if (!environment.equals("dev"))   // 非开发环境下拦截knife4j api文档
+        if (!environment.equals("dev") && !environment.equals("test"))   // 非开发与测试环境下拦截knife4j api文档
             registry.addInterceptor(new Knife4jInterceptor())
                     .addPathPatterns("/doc.html");
 
