@@ -41,24 +41,25 @@ public class UserController {
         return Result.success().data("token", token);
     }
 
-    @ApiOperation("获取全部用户数据")
-    @GetMapping("/all")
-    public Result getAll() {
-        return Result.success().data("list", userService.list());
-    }
-
-    @ApiOperation(value = "解析token", notes = "[此方法用于快速校验token, 需要以参数形式传入token]通过token获取用户个人信息")
-    @GetMapping("/info")
-    public Result info(String token) {
-        long userId = userService.parseToken(token);
-        return Result.success().data("user_id", userId);
-    }
-
-    @ApiOperation(value = "获取用户详细信息", notes = "[需要请求头带token]通过token获取用户个人信息")
-    @GetMapping("/detailed_info")
+    @ApiOperation(value = "获取用户自己的信息", notes = "[需要请求头带token]通过token获取用户个人信息")
+    @GetMapping
     @NeedToken
     public Result getUserDetailedInfo() {
         Map<String, Object> info = userService.getUserDetailedInfo();
         return Result.success().data(info);
     }
+
+    @ApiOperation(value = "解析token", notes = "[此方法用于快速校验token, 需要以参数形式传入token]通过token获取用户id")
+    @GetMapping("/parse_token")
+    public Result info(String token) {
+        long userId = userService.parseToken(token);
+        return Result.success().data("user_id", userId);
+    }
+
+    @ApiOperation("获取全部用户信息")
+    @GetMapping("/all")
+    public Result getAll() {
+        return Result.success().data("list", userService.list());
+    }
+
 }
