@@ -86,6 +86,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setId(UserInfo.get()); // 忽略用户传的id
         user.setIsCreator(null);    // 忽略creator
         user.setIsVip(null);        // 忽略vip
+        user.setCreateTime(null);   // 忽略创建时间
         return userMapper.updateById(user) > 0; // 一般不会传false
     }
 }
