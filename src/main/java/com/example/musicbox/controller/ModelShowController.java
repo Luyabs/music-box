@@ -1,4 +1,4 @@
-package com.example.musicbox.controller.util;
+package com.example.musicbox.controller;
 
 import com.example.musicbox.entity.*;
 import com.example.musicbox.entity.relation.*;
