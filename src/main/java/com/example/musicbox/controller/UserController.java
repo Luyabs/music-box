@@ -39,14 +39,6 @@ public class UserController {
         return Result.success().data("token", token);
     }
 
-    @ApiOperation(value = "获取用户自己的信息", notes = "[需要请求头带token]通过token获取用户个人信息")
-    @GetMapping("/info")
-    @NeedToken
-    public Result getUserDetailedInfo() {
-        Map<String, Object> info = userService.getUserDetailedInfo();
-        return Result.success().data(info);
-    }
-
     @ApiOperation(value = "解析token", notes = "[此方法用于快速校验token, 需要以参数形式传入token]通过token获取用户id")
     @GetMapping("/parse_token")
     public Result info(String token) {
@@ -60,7 +52,15 @@ public class UserController {
         return Result.success().data("list", userService.list());
     }
 
-    @ApiOperation(value = "修改用户信息",notes = "此方法需要带token")
+    @ApiOperation(value = "获取用户自己的信息", notes = "[需要请求头带token]通过token获取用户个人信息")
+    @GetMapping("/info")
+    @NeedToken
+    public Result getUserDetailedInfo() {
+        Map<String, Object> info = userService.getUserDetailedInfo();
+        return Result.success().data(info);
+    }
+
+    @ApiOperation(value = "修改用户信息",notes = "[token] 无效属性id, avatar, status, is_creator, is_vip, create_time, update_time")
     @PutMapping("/info")
     @NeedToken
     public Result changeUserDetailedInfo(@RequestBody User user){

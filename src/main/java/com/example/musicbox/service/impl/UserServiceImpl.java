@@ -84,9 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean changeUserDetailedInfo(User user){
         user.setId(UserInfo.get()); // 忽略用户传的id
-        user.setIsCreator(null);    // 忽略creator
-        user.setIsVip(null);        // 忽略vip
-        user.setCreateTime(null);   // 忽略创建时间
+        user.setAvatar(null).setStatus(null).setIsCreator(null).setIsVip(null).setCreateTime(null);   // 忽略不该更改的属性
         return userMapper.updateById(user) > 0; // 一般不会传false
     }
 }
