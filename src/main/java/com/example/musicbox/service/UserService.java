@@ -14,5 +14,5 @@ public interface UserService extends IService<User> {
 
     Map<String, Object> getUserDetailedInfo();   // 根据token 获取用户详细信息
 
-    Boolean changeUserDetailedInfo(User user);   // 修改用户信息
+    boolean changeUserDetailedInfo(User user);   // 修改用户信息
 }

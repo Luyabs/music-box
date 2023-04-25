@@ -5,7 +5,6 @@ import com.example.musicbox.common.Result;
 import com.example.musicbox.entity.User;
 import com.example.musicbox.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -64,13 +63,9 @@ public class UserController {
     @ApiOperation(value = "修改用户信息",notes = "此方法需要带token")
     @PutMapping("/info")
     @NeedToken
-    @ResponseBody
-    public Result changeUserDetailedInfo(User user){
-        Boolean result = userService.changeUserDetailedInfo(user);
-        if(result)
-            return Result.success().message("修改成功");
-        else
-            return Result.error().message("修改失败");
+    public Result changeUserDetailedInfo(@RequestBody User user){
+        boolean res = userService.changeUserDetailedInfo(user);
+        return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
     }
 
 }

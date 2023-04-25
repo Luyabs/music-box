@@ -71,43 +71,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Map<String, Object> getUserDetailedInfo() {
-        try {
-            Map<String, Object> map = new HashMap<>();
-            long userId = UserInfo.get();   // 通过token获取用户id
-            AbstractUser user = abstractUserMapper.selectById(userId);
-            User userDetail = userMapper.selectById(userId);
-            map.put("_user_id", userId);
-            map.put("_username", user.getUsername());
-            map.put("detailed_info", userDetail);
-            return map;
-        } catch (Exception ex) {
-            throw new ServiceException(ex.getMessage());
-        }
+        Map<String, Object> map = new HashMap<>();
+        long userId = UserInfo.get();   // 通过token获取用户id
+        AbstractUser user = abstractUserMapper.selectById(userId);
+        User userDetail = userMapper.selectById(userId);
+        map.put("_user_id", userId);
+        map.put("_username", user.getUsername());
+        map.put("detailed_info", userDetail);
+        return map;
     }
+
     @Override
-    public Boolean changeUserDetailedInfo(User user){
-        try {
-
-            if(!user.getId().equals(UserInfo.get()))//确认用户id
-                return false;
-            else if(user.getNickname().length()>80)
-                return false;
-            else if(user.getAvatar().length()>120)
-                return false;
-            else if(user.getGender().length()>5)
-                return false;
-            else if (user.getRegion().length()>50)
-                return false;
-            else if(user.getSignature().length()>80)
-                return false;
-            else if(user.getProfession().length()>80)
-                return false;
-            /////**有待修改li**/////
-            int userId = userMapper.updateById(user);
-            return true;
-        }catch(Exception ex){
-            throw new ServiceException(ex.getMessage());
-        }
-
+    public boolean changeUserDetailedInfo(User user){
+        user.setId(UserInfo.get()); // 忽略用户传的id
+        user.setIsCreator(null);    // 忽略creator
+        user.setIsVip(null);        // 忽略vip
+        return userMapper.updateById(user) > 0; // 一般不会传false
     }
 }
