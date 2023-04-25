@@ -60,13 +60,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     private Result jsonParseErrorException(Exception ex) {
-        if (ex.getMessage().trim().startsWith("JSON parse error")) {
-            String message = ex.getMessage().split(": ")[1].split(";")[0];
-            log.error("[HttpMessageNotReadableException] " + message);
-            return Result.error().message(message);
-        }
-        ex.printStackTrace();   // 未知错误
-        return Result.error().message(ex.getMessage());
+        String message = ex.getMessage();
+        if (ex.getMessage().trim().startsWith("JSON parse error"))
+            message = ex.getMessage().split(": ")[1].split(";")[0];
+        else if (ex.getMessage().trim().startsWith("Required request body is missing"))
+            message = "需要以JSON格式传入参数";
+        else
+            ex.printStackTrace();   // 未知错误
+        log.error("[HttpMessageNotReadableException] " + message);
+        return Result.error().message(message);
     }
 
     /**

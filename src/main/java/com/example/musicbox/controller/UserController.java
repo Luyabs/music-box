@@ -46,7 +46,7 @@ public class UserController {
         return Result.success().data("user_id", userId);
     }
 
-    @ApiOperation("获取全部用户信息")
+    @ApiOperation(value = "获取全部用户信息")
     @GetMapping("/all")
     public Result getAll() {
         return Result.success().data("list", userService.list());
