@@ -84,4 +84,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new ServiceException(ex.getMessage());
         }
     }
+    @Override
+    public Boolean changeUserDetailedInfo(User user){
+        try {
+
+            if(!user.getId().equals(UserInfo.get()))//确认用户id
+                return false;
+            else if(user.getNickname().length()>80)
+                return false;
+            else if(user.getAvatar().length()>120)
+                return false;
+            else if(user.getGender().length()>5)
+                return false;
+            else if (user.getRegion().length()>50)
+                return false;
+            else if(user.getSignature().length()>80)
+                return false;
+            else if(user.getProfession().length()>80)
+                return false;
+            /////**有待修改li**/////
+            int userId = userMapper.updateById(user);
+            return true;
+        }catch(Exception ex){
+            throw new ServiceException(ex.getMessage());
+        }
+
+    }
 }

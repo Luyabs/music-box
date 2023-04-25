@@ -2,14 +2,13 @@ package com.example.musicbox.controller;
 
 import com.example.musicbox.common.NeedToken;
 import com.example.musicbox.common.Result;
+import com.example.musicbox.entity.User;
 import com.example.musicbox.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -60,6 +59,18 @@ public class UserController {
     @GetMapping("/all")
     public Result getAll() {
         return Result.success().data("list", userService.list());
+    }
+
+    @ApiOperation(value = "修改用户信息",notes = "此方法需要带token")
+    @PutMapping("/info")
+    @NeedToken
+    @ResponseBody
+    public Result changeUserDetailedInfo(User user){
+        Boolean result = userService.changeUserDetailedInfo(user);
+        if(result)
+            return Result.success().message("修改成功");
+        else
+            return Result.error().message("修改失败");
     }
 
 }
