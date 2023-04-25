@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "获取用户自己的信息", notes = "[需要请求头带token]通过token获取用户个人信息")
-    @GetMapping
+    @GetMapping("/info")
     @NeedToken
     public Result getUserDetailedInfo() {
         Map<String, Object> info = userService.getUserDetailedInfo();

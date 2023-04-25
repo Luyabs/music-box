@@ -76,9 +76,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             long userId = UserInfo.get();   // 通过token获取用户id
             AbstractUser user = abstractUserMapper.selectById(userId);
             User userDetail = userMapper.selectById(userId);
-            map.put("user_id", userId);
-            map.put("username", user.getUsername());
-            map.put("_detailed_info", userDetail);
+            map.put("_user_id", userId);
+            map.put("_username", user.getUsername());
+            map.put("detailed_info", userDetail);
             return map;
         } catch (Exception ex) {
             throw new ServiceException(ex.getMessage());
