@@ -31,6 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### custom ###
 /src/main/resources/application-**.yaml
 /src/main/resources/~$URL Mapping.xlsx
 
