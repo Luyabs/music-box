@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
      * 属性不对
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    private Result dataIncorrectPropertyException(Exception ex) {
+    private Result jsonParseErrorException(Exception ex) {
         if (ex.getMessage().trim().startsWith("JSON parse error")) {
             String message = ex.getMessage().split(": ")[1].split(";")[0];
             log.error("[HttpMessageNotReadableException] " + message);
