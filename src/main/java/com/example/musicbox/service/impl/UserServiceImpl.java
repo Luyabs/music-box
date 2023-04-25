@@ -6,8 +6,10 @@ import com.example.musicbox.common.JwtUtils;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.AbstractUser;
+import com.example.musicbox.entity.Creator;
 import com.example.musicbox.entity.User;
 import com.example.musicbox.mapper.AbstractUserMapper;
+import com.example.musicbox.mapper.CreatorMapper;
 import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private CreatorMapper creatorMapper;
 
     @Override
     public String login(String username, String password) {
@@ -86,5 +91,46 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setId(UserInfo.get()); // 忽略用户传的id
         user.setAvatar(null).setStatus(null).setIsCreator(null).setIsVip(null).setCreateTime(null);   // 忽略不该更改的属性
         return userMapper.updateById(user) > 0; // 一般不会传false
+    }
+
+    @Override
+    public boolean changeUserPassword(String newPassword) {
+        AbstractUser abstractUser = abstractUserMapper.selectById(UserInfo.get());
+        String oldPassword = abstractUser.getPassword();    //得到用户的旧密码
+        if (newPassword == null ||newPassword.length() < 6)
+            throw new ServiceException("密码需要大于6位");
+        if(oldPassword.equals(newPassword))                 //判断新旧密码是否一致
+            throw new ServiceException("新旧密码不能一致");
+        else{
+            abstractUser.setPassword(newPassword);
+            return abstractUserMapper.updateById(abstractUser) > 0;
+        }
+    }
+
+    @Override
+    public boolean upgradeToVIP() {
+        User user = userMapper.selectById(UserInfo.get());
+        Boolean isVIP = user.getIsVip();
+        if(isVIP == null || isVIP)               //判断当前是否已经是VIP
+            throw new ServiceException("当前用户已经是VIP");
+        else
+            user.setIsVip(true);
+        return userMapper.updateById(user) > 0;
+    }
+
+    @Override
+    public boolean upgradeToCreator() {
+        User user = userMapper.selectById(UserInfo.get());
+        Boolean isCreator = user.getIsCreator();
+        int res1 = 0 ,res2 = 0;
+        if(isCreator)
+            throw new ServiceException("当前用户已经是创作者");
+        else{
+            user.setIsCreator(true);
+            res1 = userMapper.updateById(user);     //更新user表
+            Creator newCreator = new Creator().setId(UserInfo.get());//将该用户插入到creator表中
+            res2 = creatorMapper.insert(newCreator);
+        }
+        return res1 > 0 && res2 > 0;
     }
 }
