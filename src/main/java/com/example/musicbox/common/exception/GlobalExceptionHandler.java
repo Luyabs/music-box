@@ -6,9 +6,12 @@ import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.net.SocketTimeoutException;
 
 /**
  * 全局异常处理controller
@@ -73,10 +76,29 @@ public class GlobalExceptionHandler {
     private Result uncategorizedPropertyException(Exception ex) {
         if (ex.getMessage().trim().startsWith("### Error updating database.  Cause: java.sql.SQLException: Check constraint ")) {
             String message = ex.getMessage().split(": ")[2].split("\\.")[0];
-            log.error("[UncategorizedSQLException] " + " 出现这一条意味着数据库约束被打破, 请更换合适的值 " + message);
+            log.error("[UncategorizedSQLException] " + " 数据库约束被打破, 请为属性更换合适的值 " + message);
             return Result.error().message(message);
         }
         ex.printStackTrace();   // 未知错误
         return Result.error().message(ex.getMessage());
+    }
+
+    /**
+     * 数据库连接失败
+     */
+    @ExceptionHandler({SocketTimeoutException.class, CannotGetJdbcConnectionException.class})
+    private Result dbConnectFailedException(Exception ex) {
+        log.error("[" + ex.getClass() +  "] 数据库连接失败" + ex.getMessage());
+//        ex.printStackTrace();   // 未知错误
+        return Result.error().message("连接失败, 请重试");
+    }
+
+    /**
+     * 空指针异常 应当直接处理
+     */
+    @ExceptionHandler(NullPointerException.class)
+    private Result nullPointerException(Exception ex) {
+        ex.printStackTrace();   // 未知错误, 应当直接进行处理
+        return Result.error().message("空指针异常, 联系后端修复bug");
     }
 }
