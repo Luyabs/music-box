@@ -67,6 +67,7 @@ public class UserController {
         boolean res = userService.changeUserDetailedInfo(user);
         return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
     }
+
     @ApiOperation(value = "修改用户密码",notes = "[token]")
     @PutMapping("/info/password")
     @NeedToken
@@ -74,6 +75,7 @@ public class UserController {
         boolean res = userService.changeUserPassword(newPassword);
         return res ? Result.success().message("修改密码成功") : Result.error().message("修改密码失败");
     }
+
     @ApiOperation(value = "升级用户为VIP",notes = "[token]无参数传入")
     @PostMapping("/upgrade/vip")
     @NeedToken
@@ -81,6 +83,7 @@ public class UserController {
         boolean res = userService.upgradeToVIP();
         return res ? Result.success().message("升级VIP成功") : Result.error().message("升级VIP失败");
     }
+
     @ApiOperation(value = "升级用户为创作者",notes = "[token]无参数传入")
     @PostMapping("/upgrade/creator")
     @NeedToken

@@ -15,6 +15,7 @@ import com.example.musicbox.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return JwtUtils.generateToken(targetUser.getId().toString());   // 把用户id生成token
     }
 
+    @Transactional
     @Override
     public String register(String username, String password) {
         if (username.equals(""))
@@ -110,27 +112,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean upgradeToVIP() {
         User user = userMapper.selectById(UserInfo.get());
-        Boolean isVIP = user.getIsVip();
-        if(isVIP == null || isVIP)               //判断当前是否已经是VIP
+        if(user.getIsVip())               //判断当前是否已经是VIP
             throw new ServiceException("当前用户已经是VIP");
         else
             user.setIsVip(true);
         return userMapper.updateById(user) > 0;
     }
 
+    @Transactional
     @Override
     public boolean upgradeToCreator() {
         User user = userMapper.selectById(UserInfo.get());
         Boolean isCreator = user.getIsCreator();
-        int res1 = 0 ,res2 = 0;
         if(isCreator)
             throw new ServiceException("当前用户已经是创作者");
         else{
             user.setIsCreator(true);
-            res1 = userMapper.updateById(user);     //更新user表
+            int res1 = userMapper.updateById(user);     //更新user表
             Creator newCreator = new Creator().setId(UserInfo.get());//将该用户插入到creator表中
-            res2 = creatorMapper.insert(newCreator);
+            int res2 = creatorMapper.insert(newCreator);
+            return res1 > 0 && res2 > 0;
         }
-        return res1 > 0 && res2 > 0;
     }
 }

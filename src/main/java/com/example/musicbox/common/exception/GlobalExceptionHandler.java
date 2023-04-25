@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
@@ -93,6 +94,20 @@ public class GlobalExceptionHandler {
         log.error("[" + ex.getClass() +  "] 数据库连接失败" + ex.getMessage());
 //        ex.printStackTrace();   // 未知错误
         return Result.error().message("连接失败, 请重试");
+    }
+
+    /**
+     * 主键重复
+     */
+    @ExceptionHandler(DuplicateKeyException.class)
+    private Result duplicatePrimaryKeyException(Exception ex) {
+        if (ex.getMessage().trim().startsWith("### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException")) {
+            String message = ex.getMessage().split(":")[2].split("###")[0];
+            log.error("[UncategorizedSQLException] " + " 主键重复 " + message);
+            return Result.error().message("主键重复, 请联系后端修数据库");
+        }
+        ex.printStackTrace();   // 未知错误
+        return Result.error().message(ex.getMessage());
     }
 
     /**
