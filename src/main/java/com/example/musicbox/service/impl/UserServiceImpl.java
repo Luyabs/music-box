@@ -112,7 +112,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean upgradeToVIP() {
         User user = userMapper.selectById(UserInfo.get());
-        if(user.getIsVip())               //判断当前是否已经是VIP
+        Boolean isVIP = user.getIsVip();
+        if(isVIP == null)
+            throw new ServiceException("isVIP为空");
+        if(isVIP)               //判断当前是否已经是VIP
             throw new ServiceException("当前用户已经是VIP");
         else
             user.setIsVip(true);
@@ -124,6 +127,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean upgradeToCreator() {
         User user = userMapper.selectById(UserInfo.get());
         Boolean isCreator = user.getIsCreator();
+        if(isCreator == null)
+            throw new ServiceException("isCreator为空");
         if(isCreator)
             throw new ServiceException("当前用户已经是创作者");
         else{
