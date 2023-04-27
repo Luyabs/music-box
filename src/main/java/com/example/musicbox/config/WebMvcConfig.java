@@ -42,6 +42,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
         // knife4j
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("favicon.ico").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         super.addResourceHandlers(registry);
     }
