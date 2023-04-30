@@ -11,6 +11,7 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 import java.net.SocketTimeoutException;
 
@@ -118,4 +119,12 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();   // 未知错误, 应当直接进行处理
         return Result.error().message("空指针异常, 联系后端修复bug");
     }
+    /*
+     *下载/上传文件出错
+     */
+    @ExceptionHandler(MultipartException.class)
+    public Result uploadException(Exception ex){
+        return Result.error().message("上传失败");
+    }
+
 }

@@ -4,10 +4,15 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 10MB   # uploaded_file_size default 1MB max 10MB
+      max-file-size: 50MB   # uploaded_file_size default 1MB max 10MB
+      max-request-size: 50MB
+    tomcat:
+      max-swallow-size: 100MB #最大吞吐量为-1
 
   mvc:
     static-path-pattern: any-pattern
+
+
 
 
 mybatis-plus:
