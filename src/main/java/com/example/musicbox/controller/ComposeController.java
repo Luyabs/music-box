@@ -8,6 +8,7 @@ import com.example.musicbox.service.SongService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,8 +33,9 @@ public class ComposeController {
     @ApiOperation(value = "上传歌曲封面",notes = "[token]需传入MultipartFile文件流")
     @NeedToken
     @PostMapping("/cover")
-    public Result upLoadSongCover(@RequestPart("songCoverFile")MultipartFile songCoverFile,@RequestPart("歌曲ID") Long songID){
-        boolean res = songService.upLoadSongCover(songCoverFile,songID);
+    public Result upLoadSongCover(@RequestPart("songCoverFile")MultipartFile songCoverFile,String songID){
+        Long songId  = Long.parseLong(songID);
+        boolean res = songService.upLoadSongCover(songCoverFile,songId);
         return res?Result.success().message("上传歌曲封面成功"):Result.error().message("上传歌曲封面失败");
     }
 
