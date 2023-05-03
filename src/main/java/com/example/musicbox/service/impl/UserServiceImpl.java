@@ -96,6 +96,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public boolean changeCreatorDetailedInfo(Creator creator) {
+        creator.setId(UserInfo.get());
+        creator.setCreateTime(null);   // 忽略不该更改的属性
+        return creatorMapper.updateById(creator) > 0;
+    }
+
+    @Override
     public boolean changeUserPassword(String newPassword) {
         AbstractUser abstractUser = abstractUserMapper.selectById(UserInfo.get());
         String oldPassword = abstractUser.getPassword();    //得到用户的旧密码

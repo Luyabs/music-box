@@ -2,6 +2,7 @@ package com.example.musicbox.controller;
 
 import com.example.musicbox.common.NeedToken;
 import com.example.musicbox.common.Result;
+import com.example.musicbox.entity.Creator;
 import com.example.musicbox.entity.User;
 import com.example.musicbox.service.UserService;
 import io.swagger.annotations.Api;
@@ -65,6 +66,14 @@ public class UserController {
     @NeedToken
     public Result changeUserDetailedInfo(@RequestBody User user){
         boolean res = userService.changeUserDetailedInfo(user);
+        return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
+    }
+
+    @ApiOperation(value = "修改用户作为创作者的信息", notes = "[token] 无效属性id, creatorIntroduction, stageName, representativeWork, performingExperience, majorAchievement, brokerageCompany")
+    @PutMapping("/info/creator")
+    @NeedToken
+    public Result changeCreatorDetailedInfo(@RequestBody Creator creator){
+        boolean res = userService.changeCreatorDetailedInfo(creator);
         return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
     }
 

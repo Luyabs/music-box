@@ -1,6 +1,7 @@
 package com.example.musicbox.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.musicbox.entity.Creator;
 import com.example.musicbox.entity.User;
 
 import java.util.Map;
@@ -15,6 +16,8 @@ public interface UserService extends IService<User> {
     Map<String, Object> getUserDetailedInfo();   // 根据token 获取用户详细信息
 
     boolean changeUserDetailedInfo(User user);   // 修改用户信息
+
+    boolean changeCreatorDetailedInfo(Creator creator);    //修改用户作为创作者的信息
 
     boolean changeUserPassword(String newPassword); // 修改用户密码
 
