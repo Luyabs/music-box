@@ -36,7 +36,7 @@ public class Song {
     private String songName;
 
     @ApiModelProperty("歌曲状态")
-    private Integer status;
+    private Integer status;//0：正常，所有人可见；1：仅关注者/被关注者可见；2：仅自己可见：其他......
 
     @ApiModelProperty("歌曲发布时间")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

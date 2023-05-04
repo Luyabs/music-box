@@ -11,4 +11,6 @@ public interface SongService extends IService<Song> {
     boolean upLoadSongCover(MultipartFile songCoverFile,Long songID);       //上传（修改）歌曲封面
 
     boolean changeOwnSongInfo(Song newSong);           //修改用户自己上传的歌曲信息
+
+    boolean setVisibility(Long musicId, Integer status);//设置歌曲可见度
 }
