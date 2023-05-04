@@ -7,10 +7,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.Song;
+import com.example.musicbox.entity.relation.SongComment;
+import com.example.musicbox.entity.relation.SongMenuComposition;
 import com.example.musicbox.mapper.SongMapper;
 import com.example.musicbox.mapper.UserMapper;
+import com.example.musicbox.mapper.relation.SongCommentMapper;
+import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
 import com.example.musicbox.service.SongService;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +37,10 @@ import java.util.UUID;
 public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements SongService {
     @Autowired
     private SongMapper songMapper;
-
+    @Autowired
+    private SongCommentMapper songCommentMapper;
+    @Autowired
+    private SongMenuCompositionMapper songMenuCompositionMapper;
     @Autowired
     private UserMapper userMapper;
 
@@ -116,7 +125,22 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         }
         return songMapper.updateById(song)>0;
     }
-
+    @Override
+    public boolean deleteOwnSongInfo(Long musicId){
+        boolean res1,res2,res3;
+        Long userId = UserInfo.get();
+        Song song = songMapper.selectById(musicId);
+        if(song == null)
+            throw new ServiceException("当前歌曲不存在");
+        if(!userId.equals(song.getUserId()))
+            throw new ServiceException("当前用户无权限删除他人歌曲");
+        HashMap<String, Object> tempMap = new HashMap<>();
+        tempMap.put("song_id",musicId.toString());
+        res1 = songCommentMapper.deleteByMap(tempMap) >= 0;              //删除该歌曲下所有评论
+        res2 = songMenuCompositionMapper.deleteByMap(tempMap) >= 0;      //从所有歌单中删除
+        res3 = songMapper.deleteById(musicId) == 1;                      //从歌曲目录表中删除
+        return res1 && res2 && res3;
+    }
     @Override
     public boolean changeOwnSongInfo(Song newSong){
         long userId = UserInfo.get();
