@@ -15,6 +15,8 @@ public interface SongService extends IService<Song> {
 
     boolean changeOwnSongInfo(Song newSong);           //修改用户自己上传的歌曲信息
 
+    boolean setVisibility(Long musicId, Integer status);//设置歌曲可见度
+
     IPage<Song> pageSong(int currentPage, int pageSize, Song condition);    // 分页获取歌曲
 
     void playUnVipSong(long songId, HttpServletResponse response);

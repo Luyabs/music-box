@@ -68,6 +68,4 @@ public class ComposeController {
         boolean res = songService.setVisibility(musicId,status);
         return res?Result.success().message("设置可见度成功"):Result.error().message("设置可见度失败");
     }
-
-
 }

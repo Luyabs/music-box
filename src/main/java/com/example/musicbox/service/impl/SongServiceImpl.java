@@ -127,6 +127,22 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     }
 
     @Override
+    public boolean setVisibility(Long musicId,Integer status){
+        Long userId = UserInfo.get();
+        Song song = songMapper.selectById(musicId);
+        if(status<0||status>5)
+            throw new ServiceException("设置歌曲信息（状态）异常");
+        if(song == null)
+            throw new ServiceException("歌曲不存在");
+        if(!userId.equals(song.getUserId()))
+            throw new ServiceException("当前用户无权限修改他人歌曲信息（状态）");
+
+        song.setStatus(status);             //修改歌曲状态
+        return songMapper.updateById(song)>0;
+
+    }
+
+    @Override
     public IPage<Song> pageSong(int currentPage, int pageSize, Song condition) {
         QueryWrapper<Song> wrapper = new QueryWrapper<Song>()
                 .like(condition.getSingerName() != null, "singer_name", condition.getSingerName())
