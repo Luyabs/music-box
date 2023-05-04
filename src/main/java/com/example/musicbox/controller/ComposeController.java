@@ -61,8 +61,13 @@ public class ComposeController {
         ///**有待完成**///
         return Result.success();
     }
-
-//    @ApiOperation(value = "")
+    @ApiOperation(value = "设置歌曲可见度", notes = "[token]")
+    @NeedToken
+    @DeleteMapping("/visiblility")
+    public Result setVisibility(long musicId,int status){
+        boolean res = songService.setVisibility(musicId,status);
+        return res?Result.success().message("设置可见度成功"):Result.error().message("设置可见度失败");
+    }
 
 
 }
