@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
 
+import java.io.FileNotFoundException;
 import java.net.SocketTimeoutException;
 
 /**
@@ -22,10 +23,12 @@ import java.net.SocketTimeoutException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler({IllegalArgumentException.class, SignatureException.class})
-    private Result tokenWrong(Exception ex) {
-        log.error("[" + ex.getClass() + "] token验证失败 -- " + ex.getMessage());
-        return Result.error().message("token验证失败" + ex.getMessage());
+    private Result argumentOrSomethingError(Exception ex) {
+//        ex.printStackTrace();
+        log.error("[" + ex.getClass() + "]" + ex.getMessage());
+        return Result.error().message(ex.getMessage());
     }
+
 
     @ExceptionHandler(ExpiredJwtException.class)
     private Result tokenExpired() {
@@ -119,12 +122,23 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();   // 未知错误, 应当直接进行处理
         return Result.error().message("空指针异常, 联系后端修复bug");
     }
-    /*
-     *下载/上传文件出错
+
+    /**
+     * 下载/上传文件出错
      */
     @ExceptionHandler(MultipartException.class)
     public Result uploadException(Exception ex){
         return Result.error().message("上传失败");
     }
+
+    /**
+     * 文件不存在
+     */
+    @ExceptionHandler(FileNotFoundException.class)
+    public Result fileNotExistException(Exception ex) {
+        log.error(ex.getMessage());
+        return Result.error().message(ex.getMessage());
+    }
+
 
 }

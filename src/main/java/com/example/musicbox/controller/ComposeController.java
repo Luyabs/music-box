@@ -1,14 +1,13 @@
 package com.example.musicbox.controller;
 
 import com.example.musicbox.common.NeedToken;
-import com.example.musicbox.entity.Song;
 import com.example.musicbox.common.Result;
+import com.example.musicbox.entity.Song;
 import com.example.musicbox.service.AlbumService;
 import com.example.musicbox.service.SongService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +32,7 @@ public class ComposeController {
     @ApiOperation(value = "上传歌曲封面",notes = "[token]需传入MultipartFile文件流")
     @NeedToken
     @PostMapping("/cover")
-    public Result upLoadSongCover(@RequestPart("songCoverFile")MultipartFile songCoverFile,String songID){
+    public Result upLoadSongCover(@RequestPart("songCoverFile")MultipartFile songCoverFile, @RequestParam String songID){
         Long songId  = Long.parseLong(songID);
         boolean res = songService.upLoadSongCover(songCoverFile,songId);
         return res?Result.success().message("上传歌曲封面成功"):Result.error().message("上传歌曲封面失败");
@@ -42,7 +41,7 @@ public class ComposeController {
     @ApiOperation(value = "分页获取自己上传的歌曲",notes = "[token]需要传入页号，页大小")
     @NeedToken
     @GetMapping("/page")
-    public Result getOwnUploadedSong(int pageNum,int pageSize){
+    public Result getOwnUploadedSong(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize){
         ///**有待完成**///
         return Result.success();
     }

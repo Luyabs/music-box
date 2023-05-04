@@ -23,6 +23,9 @@ public class Song {
     @ApiModelProperty("创建者id")
     private Long userId;
 
+    @ApiModelProperty("是否只有vip才能下载/播放")
+    private Boolean isVip;
+
     @ApiModelProperty("文件所在目录")
     private String fileDirectory;
 
@@ -35,7 +38,7 @@ public class Song {
     @ApiModelProperty("歌手名")
     private String songName;
 
-    @ApiModelProperty("歌曲状态")
+    @ApiModelProperty("歌曲状态 0: 正常 暂时不设置其他状态")
     private Integer status;
 
     @ApiModelProperty("歌曲发布时间")

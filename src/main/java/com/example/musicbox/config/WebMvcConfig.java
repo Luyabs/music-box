@@ -33,16 +33,18 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Value("${spring.profiles.active}")
     private String environment;  // 仅开发环境下开启API文档
 
+    @Value("${file-url.cover-base-url}")
+    private String coverBaseUrl;     // 封面上传地址
     /**
      * 设置静态资源映射
      */
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/cover/**").addResourceLocations("file:///" + coverBaseUrl);
 
         // knife4j
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("favicon.ico").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         super.addResourceHandlers(registry);
     }
