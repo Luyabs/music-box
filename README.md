@@ -17,6 +17,10 @@ spring:
     url: jdbc:mysql://ip:port/database_name  # MYSQL
     username: your_username
     password: yout_password
+    
+file-url:
+  song-base-url:  D:/tmp/music/
+  cover-base-url:  D:/tmp/cover/
 ```
 
 ## 项目结构
