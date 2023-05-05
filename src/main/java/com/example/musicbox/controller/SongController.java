@@ -35,32 +35,31 @@ public class SongController {
         return Result.success().data("song_info", songInfo);
     }
 
-    @ApiOperation(value = "播放指定id非vip歌曲", notes = "请直接在浏览器输入URL来测试这项")
-    @GetMapping("/play/{song_id}")
+    @ApiOperation(value = "播放指定id歌曲 [未登录状态]", notes = "请直接在浏览器输入URL来测试这项 [无法下载VIP歌曲]")
+    @GetMapping("/play/guest/{song_id}")
     public void playSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
-        songService.playUnVipSong(songId, response);
+        songService.playSongGuest(songId, response);
     }
 
-    @ApiOperation(value = "播放指定id的vip歌曲", notes = "[需要token] 请直接在浏览器输入URL来测试这项(较难测试)")
+    @ApiOperation(value = "播放指定id歌曲 [限登录状态]", notes = "[需要token] 请直接在浏览器输入URL来测试这项(较难测试)")
     @NeedToken
-    @GetMapping("/play/vip/{song_id}")
+    @GetMapping("/play/logged/{song_id}")
     public void playVipSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
-        songService.playVipSong(songId, response);
+        songService.playSongLogged(songId, response);
     }
 
 
-    @ApiOperation(value = "下载指定id非vip歌曲", notes = "[需要token]")
-//    @NeedToken
-    @GetMapping("/download/{song_id}")
+    @ApiOperation(value = "下载指定id歌曲 [未登录状态]", notes = "请直接在浏览器输入URL来测试这项 [无法下载VIP歌曲]")
+    @GetMapping("/download/guest/{song_id}")
     public void downloadSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
-        songService.downloadUnVipSong(songId, response);
+        songService.downloadSongGuest(songId, response);
     }
 
-    @ApiOperation(value = "下载指定id的vip歌曲", notes = "[需要token]")
+    @ApiOperation(value = "下载指定id歌曲 [限登录状态]", notes = "[需要token]")
     @NeedToken
-    @GetMapping("/download/vip/{song_id}")
+    @GetMapping("/download/logged/{song_id}")
     public void downloadVipSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
-        songService.downloadVipSong(songId, response);
+        songService.downloadSongLogged(songId, response);
     }
 
 

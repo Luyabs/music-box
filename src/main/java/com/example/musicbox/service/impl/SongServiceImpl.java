@@ -7,15 +7,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.Song;
-import com.example.musicbox.entity.relation.SongComment;
-import com.example.musicbox.entity.relation.SongMenuComposition;
+import com.example.musicbox.entity.relation.SongPlayRecord;
 import com.example.musicbox.mapper.SongMapper;
 import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.mapper.relation.SongCommentMapper;
 import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
+import com.example.musicbox.mapper.relation.SongPlayRecordMapper;
 import com.example.musicbox.service.SongService;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,6 +42,9 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     private SongMenuCompositionMapper songMenuCompositionMapper;
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private SongPlayRecordMapper songPlayRecordMapper;
 
     @Value("${file-url.song-base-url}")
     private String songBaseUrl;     // 音乐上传地址
@@ -113,7 +115,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
             newFileName = coverBaseUrl + randomFileName +'.'+prefix;             //重构图片名
             localFile = new File(newFileName);
             songCoverFile.transferTo(localFile);
-            song = songMapper.selectById(songID);
+            song = getSongById(songID);
             if(!song.getUserId().equals(UserInfo.get()))
                 throw new ServiceException("当前用户无权限修改他人歌曲");
             else
@@ -129,9 +131,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     public boolean deleteOwnSongInfo(Long musicId){
         boolean res1,res2,res3;
         Long userId = UserInfo.get();
-        Song song = songMapper.selectById(musicId);
-        if(song == null)
-            throw new ServiceException("当前歌曲不存在");
+        Song song = getSongById(musicId);
         if(!userId.equals(song.getUserId()))
             throw new ServiceException("当前用户无权限删除他人歌曲");
         HashMap<String, Object> tempMap = new HashMap<>();
@@ -153,11 +153,9 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     @Override
     public boolean setVisibility(Long musicId,Integer status){
         Long userId = UserInfo.get();
-        Song song = songMapper.selectById(musicId);
+        Song song = getSongById(musicId);
         if(status<0||status>5)
             throw new ServiceException("设置歌曲信息（状态）异常");
-        if(song == null)
-            throw new ServiceException("歌曲不存在");
         if(!userId.equals(song.getUserId()))
             throw new ServiceException("当前用户无权限修改他人歌曲信息（状态）");
 
@@ -179,22 +177,18 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     }
 
     @Override
-    public void playUnVipSong(long songId, HttpServletResponse response) {
-        Song songInfo = songMapper.selectById(songId);
-        if (songInfo == null)
-            throw new ServiceException("不存在id=" + songId + "的歌曲");
+    public void playSongGuest(long songId, HttpServletResponse response) {
+        Song songInfo = getSongById(songId);
 
         if (songInfo.getIsVip())
-            throw new ServiceException("本URL不能播放VIP歌曲");
+            throw new ServiceException("未登录状态不能播放VIP歌曲");
 
         transmitSong(songInfo, response, true);
     }
 
     @Override
-    public void playVipSong(long songId, HttpServletResponse response) {
-        Song songInfo = songMapper.selectById(songId);
-        if (songInfo == null)
-            throw new ServiceException("不存在id=" + songId + "的歌曲");
+    public void playSongLogged(long songId, HttpServletResponse response) {
+        Song songInfo = getSongById(songId);
 
         if (songInfo.getIsVip() && !userMapper.selectById(UserInfo.get()).getIsVip() && songInfo.getUserId() != UserInfo.get())
             throw new ServiceException("本歌曲需要vip权限才能播放");  // 作者本人允许播放
@@ -203,22 +197,18 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     }
 
     @Override
-    public void downloadUnVipSong(long songId, HttpServletResponse response) {
-        Song songInfo = songMapper.selectById(songId);
-        if (songInfo == null)
-            throw new ServiceException("不存在id=" + songId + "的歌曲");
+    public void downloadSongGuest(long songId, HttpServletResponse response) {
+        Song songInfo = getSongById(songId);
 
         if (songInfo.getIsVip())
-            throw new ServiceException("本URL不能下载VIP歌曲");
+            throw new ServiceException("未登录状态不能下载VIP歌曲");
 
         transmitSong(songInfo, response, false);
     }
 
     @Override
-    public void downloadVipSong(long songId, HttpServletResponse response) {
-        Song songInfo = songMapper.selectById(songId);
-        if (songInfo == null)
-            throw new ServiceException("不存在id=" + songId + "的歌曲");
+    public void downloadSongLogged(long songId, HttpServletResponse response) {
+        Song songInfo = getSongById(songId);
 
         if (songInfo.getIsVip() && !userMapper.selectById(UserInfo.get()).getIsVip() && songInfo.getUserId() != UserInfo.get())
             throw new ServiceException("本歌曲需要vip权限才能下载");   // 作者本人允许下载
@@ -226,6 +216,19 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         transmitSong(songInfo, response, false);
     }
 
+    /**
+     * 按id获取歌曲 并校验是否为null
+     */
+    private Song getSongById(long songId) {
+        Song songInfo = songMapper.selectById(songId);
+        if (songInfo == null)
+            throw new ServiceException("不存在id=" + songId + "的歌曲");
+        return songInfo;
+    }
+
+    /**
+     * 通过response传输歌曲文件
+     */
     @SneakyThrows
     private void transmitSong(Song songInfo, HttpServletResponse response, boolean online) {
         URL url = new URL("file:///" + songInfo.getFileDirectory());
@@ -240,12 +243,19 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         );
         OutputStream outputStream = response.getOutputStream();
 
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[64];
         int len;
         while ((len = inputStream.read(buffer)) > 0) {
             outputStream.write(buffer, 0, len);
         }
         inputStream.close();
+
+        // 增加播放/下载记录
+        if (UserInfo.isNull())      // 未登录用户不留下听歌记录
+            return;
+        SongPlayRecord record = new SongPlayRecord().setUserId(UserInfo.get()).setSongId(songInfo.getId());
+        record.setStatus(online ? 0 : 1);
+        songPlayRecordMapper.insert(record);
     }
 
 

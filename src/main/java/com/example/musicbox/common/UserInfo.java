@@ -20,4 +20,7 @@ public class UserInfo {
         return res;
     }
 
+    public static boolean isNull(){
+        return userThreadLocal.get() == null;
+    }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @TableName("playback_record_user_song")
 public class SongPlayRecord {
     @ApiModelProperty("记录id")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("用户ID")
@@ -23,7 +23,7 @@ public class SongPlayRecord {
     @ApiModelProperty("歌曲id")
     private Long songId;
 
-    @ApiModelProperty("播放状态")
+    @ApiModelProperty("行为记录 0: 播放  1: 下载  -1: 已逻辑删除此记录")
     private Integer status;
 
     @ApiModelProperty("创建时间")

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @TableName("subscription_user")
 public class UserSubscription {
     @ApiModelProperty("记录id")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("关注者id")

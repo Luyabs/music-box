@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @TableName("composition_song_menu_song")
 public class SongMenuComposition {
     @ApiModelProperty("记录id")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("歌单id")

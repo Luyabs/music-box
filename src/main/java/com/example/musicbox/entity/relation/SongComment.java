@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @TableName("comment_user_song")
 public class SongComment {
     @ApiModelProperty("记录id")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("用户ID")

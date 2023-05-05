@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @TableName("chat_user")
 public class UserChat {
     @ApiModelProperty("记录id")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("发送者id")

@@ -21,11 +21,11 @@ public interface SongService extends IService<Song> {
 
     IPage<Song> pageSong(int currentPage, int pageSize, Song condition);    // 分页获取歌曲
 
-    void playUnVipSong(long songId, HttpServletResponse response);
+    void playSongGuest(long songId, HttpServletResponse response);
 
-    void playVipSong(long songId, HttpServletResponse response);
+    void playSongLogged(long songId, HttpServletResponse response);
 
-    void downloadUnVipSong(long songId, HttpServletResponse response);
+    void downloadSongGuest(long songId, HttpServletResponse response);
 
-    void downloadVipSong(long songId, HttpServletResponse response);
+    void downloadSongLogged(long songId, HttpServletResponse response);
 }
