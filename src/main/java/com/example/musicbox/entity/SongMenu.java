@@ -19,7 +19,7 @@ public class SongMenu {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    @ApiModelProperty("歌单权限")
+    @ApiModelProperty("歌单权限：-1：异常，0：正常")
     private Integer authority;
 
     @ApiModelProperty("歌单名")

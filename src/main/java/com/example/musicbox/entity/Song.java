@@ -38,7 +38,11 @@ public class Song {
     @ApiModelProperty("歌手名")
     private String songName;
 
-    @ApiModelProperty("歌曲状态 0：正常，所有人可见；1：仅关注者/被关注者可见；2：仅自己可见：其他......")
+    @ApiModelProperty("歌曲状态 :" +
+            "-1：歌曲信息被删除"+
+            "0：正常，所有人可见；" +
+            "1：仅关注者/被关注者可见；" +
+            "2：仅自己可见：其他......")
     private Integer status;
 
     @ApiModelProperty("歌曲发布时间")

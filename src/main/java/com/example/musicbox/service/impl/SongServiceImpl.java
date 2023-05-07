@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.Song;
+import com.example.musicbox.entity.relation.SongComment;
 import com.example.musicbox.entity.relation.SongPlayRecord;
 import com.example.musicbox.mapper.SongMapper;
 import com.example.musicbox.mapper.UserMapper;
@@ -18,6 +19,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -38,8 +40,6 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     private SongMapper songMapper;
     @Autowired
     private SongCommentMapper songCommentMapper;
-    @Autowired
-    private SongMenuCompositionMapper songMenuCompositionMapper;
     @Autowired
     private UserMapper userMapper;
 
@@ -79,7 +79,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
             newFileName = songBaseUrl + randomFileName +'.'+prefix;
             localFile = new File(newFileName);
             songFile.transferTo(localFile);
-            //歌曲记录初始化：id，后台文件路径，歌曲名默认是上传文件名,封面默认为no_picture_yet.jpg,歌手名未知
+            //歌曲记录初始化：上传者id，后台文件路径，歌曲名默认是上传文件名,封面默认为no_picture_yet.jpg,歌手名未知
             newSong = new Song().setUserId(UserInfo.get()).
                     setFileDirectory(newFileName).
                     setSongName(originFileName.substring(0,index)).
@@ -93,6 +93,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     }
     @Override
     public boolean upLoadSongCover(MultipartFile songCoverFile, Long songID){
+
         new File(coverBaseUrl).mkdirs();  // 没有文件夹就创一个
 
         String originFileName = songCoverFile.getOriginalFilename();   //原文件名
@@ -116,6 +117,8 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
             localFile = new File(newFileName);
             songCoverFile.transferTo(localFile);
             song = getSongById(songID);
+            if(song.getStatus()<0)
+                throw new ServiceException("歌曲状态异常（删除/封禁），无法上传封面");
             if(!song.getUserId().equals(UserInfo.get()))
                 throw new ServiceException("当前用户无权限修改他人歌曲");
             else
@@ -127,37 +130,51 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         }
         return songMapper.updateById(song)>0;
     }
+    @Transactional
     @Override
-    public boolean deleteOwnSongInfo(Long musicId){
-        boolean res1,res2,res3;
-        Long userId = UserInfo.get();
+    public boolean deleteOwnSongInfo(long musicId){
+        long userId = UserInfo.get();
         Song song = getSongById(musicId);
-        if(!userId.equals(song.getUserId()))
+        if(!song.getUserId().equals(userId))
             throw new ServiceException("当前用户无权限删除他人歌曲");
-        HashMap<String, Object> tempMap = new HashMap<>();
-        tempMap.put("song_id",musicId.toString());
-        res1 = songCommentMapper.deleteByMap(tempMap) >= 0;              //删除该歌曲下所有评论
-        res2 = songMenuCompositionMapper.deleteByMap(tempMap) >= 0;      //从所有歌单中删除
-        res3 = songMapper.deleteById(musicId) == 1;                      //从歌曲目录表中删除
-        return res1 && res2 && res3;
+        SongComment songComment = new SongComment().
+                setStatus(-1).                                               //更新歌曲下评论的状态为-1
+                setId(null).
+                setCreateTime(null);
+        QueryWrapper<SongComment> wrapper = new QueryWrapper<SongComment>().
+                eq("song_id",musicId).
+                ge("status",0);                                  //所有状态正常（>0）的歌曲评论
+        if(song.getStatus()<0)
+            throw new ServiceException("歌曲状态异常，用户无法删除歌曲");
+        song.setStatus(-1);                                                 //更新歌曲状态为-1
+        return  songCommentMapper.update(songComment,wrapper) > 0&&
+                songMapper.updateById(song) == 1;
     }
     @Override
     public boolean changeOwnSongInfo(Song newSong){
         long userId = UserInfo.get();
+        Song originSong = getSongById(newSong.getId());           //查找被修改的歌曲状态
+        if(originSong.getStatus()<0)
+            throw new ServiceException("歌曲状态异常，用户无法修改歌曲信息");
         if(!newSong.getUserId().equals(userId))     //若需要修改信息的歌曲的用户id和当前请求的用户id不符，抛异常
             throw new ServiceException("当前用户无权限修改他人歌曲/无法修改上传者id");
-        newSong.setFileDirectory(null).setCreateTime(null).setStatus(null).setCreateTime(null).setCoverPicture(null);
+        newSong.setFileDirectory(null).             //歌曲路径无法修改
+                setStatus(null).                    //歌曲状态无法修改
+                setCreateTime(null).                //歌曲建立时间无法修改
+                setCoverPicture(null);              //歌曲封面无法修改
         return songMapper.updateById(newSong) > 0;
     }
 
     @Override
-    public boolean setVisibility(Long musicId,Integer status){
+    public boolean setVisibility(long musicId,Integer status){
         Long userId = UserInfo.get();
         Song song = getSongById(musicId);
-        if(status<0||status>5)
-            throw new ServiceException("设置歌曲信息（状态）异常");
         if(!userId.equals(song.getUserId()))
             throw new ServiceException("当前用户无权限修改他人歌曲信息（状态）");
+        if(song.getStatus()<0)
+            throw new ServiceException("歌曲状态异常，用户无法修改歌曲可见度");
+        if(status<0||status>3)
+            throw new ServiceException("设置歌曲信息（状态）异常");
 
         song.setStatus(status);             //修改歌曲状态
         return songMapper.updateById(song)>0;
@@ -225,6 +242,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
             throw new ServiceException("不存在id=" + songId + "的歌曲");
         return songInfo;
     }
+
 
     /**
      * 通过response传输歌曲文件

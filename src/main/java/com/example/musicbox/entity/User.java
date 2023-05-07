@@ -30,6 +30,9 @@ public class User {
     @ApiModelProperty("地区")
     private String region;
 
+    @ApiModelProperty("生日")
+    private String birthday;
+
     @ApiModelProperty("个性签名")
     private String signature;
 

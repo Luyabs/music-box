@@ -1,6 +1,7 @@
 package com.example.musicbox.controller;
 
 import com.example.musicbox.common.NeedToken;
+import com.example.musicbox.dto.AlbumDto;
 import com.example.musicbox.entity.Album;
 import com.example.musicbox.entity.Song;
 import com.example.musicbox.common.Result;
@@ -10,6 +11,7 @@ import com.example.musicbox.service.SongService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,17 +76,26 @@ public class ComposeController {
         return res?Result.success().message("设置可见度成功"):Result.error().message("设置可见度失败");
     }
 
-//    @ApiOperation(value = "创建专辑" , notes = "[token]传入一个包含专辑和歌单对象的map")
-//    @NeedToken
-//    @PostMapping("/album")
-//    public Result createAlbum(@RequestBody HashMap<String, Object>map){
-//        Album newAlbum = (Album) map.get("album");
-//        SongMenu newSongMenu = (SongMenu) map.get("songMenu");
-//        boolean res = albumService.createAlbum(newSongMenu,newAlbum);
-//        return res?Result.success().message("创建专辑成功"):Result.error().message("创建专辑失败");
-//
-//    }
+    @ApiOperation(value = "创建专辑" , notes = "[token]传入一个包含专辑和歌单的对象")
+    @NeedToken
+    @PostMapping("/album")
+    public Result createAlbum(@RequestBody AlbumDto albumDto){
+        boolean res = albumService.createAlbum(albumDto);
+        return res?Result.success().message("创建专辑成功"):Result.error().message("创建专辑失败");
 
-
-
+    }
+    @ApiOperation(value = "修改专辑信息" , notes = "[token]传入一个包含专辑和歌单的对象")
+    @NeedToken
+    @PutMapping("/album")
+    public Result changeAlbumInfo(@RequestBody AlbumDto albumDto){
+        boolean res = albumService.changeAlbumInfo(albumDto);
+        return res?Result.success().message("修改专辑成功"):Result.error().message("修改专辑失败");
+    }
+    @ApiOperation(value = "删除自己上传的专辑", notes = "[token]，传入一个专辑（歌单）id")
+    @NeedToken
+    @DeleteMapping("/album/{music_menu_id}")
+    public Result deleteAlbumInfo(@PathVariable("music_menu_id") long musicMenuId){
+        boolean res = albumService.deleteAlbum(musicMenuId);
+        return res?Result.success().message("删除专辑成功"):Result.error().message("删除专辑失败");
+    }
 }
