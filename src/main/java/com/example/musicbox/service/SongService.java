@@ -3,6 +3,7 @@ package com.example.musicbox.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.musicbox.entity.Song;
+import com.example.musicbox.entity.relation.SongComment;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,4 +29,14 @@ public interface SongService extends IService<Song> {
     void downloadSongGuest(long songId, HttpServletResponse response);
 
     void downloadSongLogged(long songId, HttpServletResponse response);
+
+    boolean saveComment(long songId, String content);            //发布评论
+
+    boolean changeComment(long commentId, String content);       //修改评论
+
+    boolean deleteComment(long commentId);          //删除评论
+
+    IPage<SongComment> songCommentPage(long songId, int currentPage, int pageSize, SongComment conditon);     //分页获取指定id的歌曲评论
+
+
 }

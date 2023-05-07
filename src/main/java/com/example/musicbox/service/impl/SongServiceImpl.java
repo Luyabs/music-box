@@ -1,8 +1,9 @@
 package com.example.musicbox.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
@@ -10,18 +11,20 @@ import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.relation.SongComment;
 import com.example.musicbox.entity.relation.SongPlayRecord;
 import com.example.musicbox.mapper.SongMapper;
-import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.mapper.relation.SongCommentMapper;
+import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
 import com.example.musicbox.mapper.relation.SongPlayRecordMapper;
 import com.example.musicbox.service.SongService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.stream.events.Comment;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
@@ -53,7 +56,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     private String coverBaseUrl;     // 封面上传地址
 
     @Override
-    public boolean upLoadSongFile(MultipartFile songFile){
+    public boolean upLoadSongFile(MultipartFile songFile) {
         new File(songBaseUrl).mkdirs();  // 没有文件夹就创一个
         if (!userMapper.selectById(UserInfo.get()).getIsCreator())
             throw new ServiceException("你还未加入创作者，无法上传作品");
@@ -65,34 +68,34 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         Song newSong;
         int index;
         List<String> songPrefix = List.of("mp3", "wav", "wma", "m4a", "flac");
-        try{
-            if(originFileName!=null){
+        try {
+            if (originFileName != null) {
                 index = originFileName.lastIndexOf('.');
-                prefix =originFileName.substring(index+1);
-                if(index<=0 || !songPrefix.contains(prefix))
+                prefix = originFileName.substring(index + 1);
+                if (index <= 0 || !songPrefix.contains(prefix))
                     throw new ServiceException("文件格式错误");
-            }
-            else{
+            } else {
                 throw new ServiceException("文件名错误（不能为空）");
             }
             String randomFileName = UUID.randomUUID().toString();               //服务器本地歌曲名随机
-            newFileName = songBaseUrl + randomFileName +'.'+prefix;
+            newFileName = songBaseUrl + randomFileName + '.' + prefix;
             localFile = new File(newFileName);
             songFile.transferTo(localFile);
             //歌曲记录初始化：上传者id，后台文件路径，歌曲名默认是上传文件名,封面默认为no_picture_yet.jpg,歌手名未知
             newSong = new Song().setUserId(UserInfo.get()).
                     setFileDirectory(newFileName).
-                    setSongName(originFileName.substring(0,index)).
+                    setSongName(originFileName.substring(0, index)).
                     setCoverPicture("src/main/resources/static/no_picture_yet.jpg").
                     setSingerName("未知");
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.error(ex.getMessage());
             throw new ServiceException(ex.getMessage());
         }
-        return songMapper.insert(newSong)>0;
+        return songMapper.insert(newSong) > 0;
     }
+
     @Override
-    public boolean upLoadSongCover(MultipartFile songCoverFile, Long songID){
+    public boolean upLoadSongCover(MultipartFile songCoverFile, Long songID) {
 
         new File(coverBaseUrl).mkdirs();  // 没有文件夹就创一个
 
@@ -102,61 +105,62 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         File localFile;          //本地文件对象
         int index;
         Song song;
-        try{
-            if(originFileName!=null){
+        try {
+            if (originFileName != null) {
                 index = originFileName.lastIndexOf('.');
-                prefix =originFileName.substring(index+1);
-                if(index<=0 || !prefix.equals("jpg"))
+                prefix = originFileName.substring(index + 1);
+                if (index <= 0 || !prefix.equals("jpg"))
                     throw new ServiceException("歌曲封面格式错误（只能为jpg）");
-            }
-            else{
+            } else {
                 throw new ServiceException("文件名错误（不能为空）");
             }
             String randomFileName = UUID.randomUUID().toString();               //服务器本地歌曲封面随机
-            newFileName = coverBaseUrl + randomFileName +'.'+prefix;             //重构图片名
+            newFileName = coverBaseUrl + randomFileName + '.' + prefix;             //重构图片名
             localFile = new File(newFileName);
             songCoverFile.transferTo(localFile);
             song = getSongById(songID);
-            if(song.getStatus()<0)
+            if (song.getStatus() < 0)
                 throw new ServiceException("歌曲状态异常（删除/封禁），无法上传封面");
-            if(!song.getUserId().equals(UserInfo.get()))
+            if (!song.getUserId().equals(UserInfo.get()))
                 throw new ServiceException("当前用户无权限修改他人歌曲");
             else
                 song.setCoverPicture(newFileName);                              //若当前用户是歌曲的创建者，修改封面
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.error(ex.getMessage());
             throw new ServiceException(ex.getMessage());
         }
-        return songMapper.updateById(song)>0;
+        return songMapper.updateById(song) > 0;
     }
+
     @Transactional
     @Override
-    public boolean deleteOwnSongInfo(long musicId){
+    public boolean deleteOwnSongInfo(long musicId) {
         long userId = UserInfo.get();
         Song song = getSongById(musicId);
-        if(!song.getUserId().equals(userId))
+        if (!song.getUserId().equals(userId))
             throw new ServiceException("当前用户无权限删除他人歌曲");
         SongComment songComment = new SongComment().
                 setStatus(-1).                                               //更新歌曲下评论的状态为-1
-                setId(null).
+                        setId(null).
                 setCreateTime(null);
         QueryWrapper<SongComment> wrapper = new QueryWrapper<SongComment>().
-                eq("song_id",musicId).
-                ge("status",0);                                  //所有状态正常（>0）的歌曲评论
-        if(song.getStatus()<0)
+                eq("song_id", musicId).
+                ge("status", 0);                                  //所有状态正常（>0）的歌曲评论
+        if (song.getStatus() < 0)
             throw new ServiceException("歌曲状态异常，用户无法删除歌曲");
         song.setStatus(-1);                                                 //更新歌曲状态为-1
-        return  songCommentMapper.update(songComment,wrapper) > 0&&
+        return songCommentMapper.update(songComment, wrapper) > 0 &&
                 songMapper.updateById(song) == 1;
     }
+
     @Override
-    public boolean changeOwnSongInfo(Song newSong){
+    public boolean changeOwnSongInfo(Song newSong) {
         long userId = UserInfo.get();
         Song originSong = getSongById(newSong.getId());           //查找被修改的歌曲状态
-        if(originSong.getStatus()<0)
+        if (originSong.getStatus() < 0)
             throw new ServiceException("歌曲状态异常，用户无法修改歌曲信息");
-        if(!newSong.getUserId().equals(userId))     //若需要修改信息的歌曲的用户id和当前请求的用户id不符，抛异常
+        if (!newSong.getUserId().equals(userId))     //若需要修改信息的歌曲的用户id和当前请求的用户id不符，抛异常
             throw new ServiceException("当前用户无权限修改他人歌曲/无法修改上传者id");
         newSong.setFileDirectory(null).             //歌曲路径无法修改
                 setStatus(null).                    //歌曲状态无法修改
@@ -166,18 +170,18 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     }
 
     @Override
-    public boolean setVisibility(long musicId,Integer status){
+    public boolean setVisibility(long musicId, Integer status) {
         Long userId = UserInfo.get();
         Song song = getSongById(musicId);
-        if(!userId.equals(song.getUserId()))
+        if (!userId.equals(song.getUserId()))
             throw new ServiceException("当前用户无权限修改他人歌曲信息（状态）");
-        if(song.getStatus()<0)
+        if (song.getStatus() < 0)
             throw new ServiceException("歌曲状态异常，用户无法修改歌曲可见度");
-        if(status<0||status>3)
+        if (status < 0 || status > 3)
             throw new ServiceException("设置歌曲信息（状态）异常");
 
         song.setStatus(status);             //修改歌曲状态
-        return songMapper.updateById(song)>0;
+        return songMapper.updateById(song) > 0;
 
     }
 
@@ -276,5 +280,48 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         songPlayRecordMapper.insert(record);
     }
 
+
+    @Override
+    public boolean saveComment(long songId, String content) {
+        long userId = UserInfo.get();
+        if (content == null || content.length() <= 0) {
+            throw new ServiceException("评论内容不允许为空");
+        }
+        SongComment sc = new SongComment().setSongId(songId).setUserId(userId).setCommentsContent(content).setStatus(0);
+        return songCommentMapper.insert(sc) > 0;
+    }
+
+    @Override
+    public boolean changeComment(long commentId, String content) {
+        long userId = UserInfo.get();
+        if (userId != songCommentMapper.selectById(commentId).getUserId()) {
+            throw new ServiceException("当前用户无权限修改他人评论");
+        }
+        if (content == null || content.length() <= 0) {
+            throw new ServiceException("评论内容不允许为空");
+        }
+        SongComment sc = new SongComment().setCommentsContent(content).setId(commentId);
+        return songCommentMapper.updateById(sc) > 0;
+    }
+
+    @Override
+    public boolean deleteComment(long commentId) {
+        long userId = UserInfo.get();
+        if (userId != songCommentMapper.selectById(commentId).getUserId()) {
+            throw new ServiceException("当前用户无权限删除他人评论");
+        }
+        return songCommentMapper.deleteById(commentId) > 0;
+    }
+
+    @Override
+    public IPage<SongComment> songCommentPage(long songId, int currentPage, int pageSize, SongComment conditon) {
+        QueryWrapper<SongComment> wrapper = new QueryWrapper<SongComment>()
+                .eq("song_id", songId)
+                .eq(conditon.getUserId() != null, "user_id", conditon.getUserId())
+                .like(conditon.getCommentsContent() != null, "comments_content", conditon.getCommentsContent())
+                .orderByDesc("update_time");
+        IPage<SongComment> songCommentPage = songCommentMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
+        return songCommentPage;
+    }
 
 }

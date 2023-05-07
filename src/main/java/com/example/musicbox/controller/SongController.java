@@ -4,6 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.musicbox.common.NeedToken;
 import com.example.musicbox.common.Result;
 import com.example.musicbox.entity.Song;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.musicbox.common.NeedToken;
+import com.example.musicbox.common.Result;
+import com.example.musicbox.entity.relation.SongComment;
 import com.example.musicbox.service.SongService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,4 +67,45 @@ public class SongController {
     }
 
 
+    @ApiOperation(value = "发表对指定歌曲的评论", notes = "[token] {song_id}, content")
+    @PostMapping(value = "/comment/{song_id}")
+    @NeedToken
+    public Result comment(@PathVariable long song_id, String content) {
+        boolean res = songService.saveComment(song_id, content);
+        return res ? Result.success().message("发布成功") : Result.error().message("发布失败");
+    }
+
+    @ApiOperation(value = "修改对指定歌曲的评论", notes = "[token] {comment_id}, content")
+    @PutMapping(value = "/comment/{comment_id}")
+    @NeedToken
+    public Result changeComment(@PathVariable long comment_id, String content) {
+        boolean res = songService.changeComment(comment_id, content);
+        return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
+    }
+
+    @ApiOperation(value = "删除对指定歌曲的评论", notes = "[token] {comment_id}")
+    @DeleteMapping(value = "/comment/{comment_id}")
+    @NeedToken
+    public Result deleteComment(@PathVariable long comment_id) {
+        boolean res = songService.deleteComment(comment_id);
+        return res ? Result.success().message("删除成功") : Result.error().message("删除失败");
+    }
+
+    @ApiOperation(value = "分页获取指定id的歌曲评论", notes = "{song_id}, page_number, page_size, *条件 允许根据user_id和content查询")
+    @GetMapping(value = "/comment/{song_id}")
+    public Result getSongCommentPage(@PathVariable long song_id, int pageNumber, int pageSize, SongComment condition) {
+        return Result.success().data("pages", songService.songCommentPage(song_id, pageNumber, pageSize, condition));
+    }
+
+//    @Value("${file-url.song-base-url}")
+//    private String baseUrl;     // 图片基地址
+//
+//    @GetMapping
+//    public Result getAll() {
+//        log.info("baseUrl: " + baseUrl);
+//        log.info("baseUrl: " + baseUrl);
+//        log.info("baseUrl: " + baseUrl);
+//        log.info("baseUrl: " + baseUrl);
+//        return Result.success().data("list", songService.list());
+//    }
 }

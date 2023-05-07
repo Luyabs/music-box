@@ -98,8 +98,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean changeCreatorDetailedInfo(Creator creator) {
         creator.setId(UserInfo.get());
-        creator.setCreateTime(null);   // 忽略不该更改的属性
-        return creatorMapper.updateById(creator) > 0;
+        User user = userMapper.selectById(creator.getId());
+        if (user.getIsCreator()) {  //判断是否为创作者
+            creator.setCreateTime(null);   // 忽略不该更改的属性
+            return creatorMapper.updateById(creator) > 0;
+        }
+        else {
+            throw new ServiceException("该用户不是创作者");
+        }
     }
 
     @Override
