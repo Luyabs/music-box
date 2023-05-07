@@ -1,0 +1,1 @@
+nohup java -jar /home/music-box/music-box-0.0.1-SNAPSHOT.jar

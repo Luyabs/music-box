@@ -4,9 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.musicbox.common.NeedToken;
 import com.example.musicbox.common.Result;
 import com.example.musicbox.entity.Song;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.musicbox.common.NeedToken;
-import com.example.musicbox.common.Result;
 import com.example.musicbox.entity.relation.SongComment;
 import com.example.musicbox.service.SongService;
 import io.swagger.annotations.Api;
@@ -96,16 +93,4 @@ public class SongController {
     public Result getSongCommentPage(@PathVariable long song_id, int pageNumber, int pageSize, SongComment condition) {
         return Result.success().data("pages", songService.songCommentPage(song_id, pageNumber, pageSize, condition));
     }
-
-//    @Value("${file-url.song-base-url}")
-//    private String baseUrl;     // 图片基地址
-//
-//    @GetMapping
-//    public Result getAll() {
-//        log.info("baseUrl: " + baseUrl);
-//        log.info("baseUrl: " + baseUrl);
-//        log.info("baseUrl: " + baseUrl);
-//        log.info("baseUrl: " + baseUrl);
-//        return Result.success().data("list", songService.list());
-//    }
 }
