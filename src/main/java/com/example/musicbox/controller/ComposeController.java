@@ -1,6 +1,8 @@
 package com.example.musicbox.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.musicbox.common.NeedToken;
+import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.dto.AlbumDto;
 import com.example.musicbox.entity.Album;
 import com.example.musicbox.entity.Song;
@@ -49,8 +51,9 @@ public class ComposeController {
     @NeedToken
     @GetMapping("/page")
     public Result getOwnUploadedSong(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize){
-        ///**有待完成**///
-        return Result.success();
+        IPage<Song> songPage = songService.pageSongByUserId(pageNum, pageSize, UserInfo.get());
+        return Result.success().data("song_page", songPage);
+
     }
 
     @ApiOperation(value = "修改自己上传的歌曲信息", notes = "[token]")

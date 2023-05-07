@@ -196,7 +196,14 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         IPage<Song> songPage = songMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
         return songPage;
     }
-
+    @Override
+    public IPage<Song> pageSongByUserId(int currentPage, int pageSize, long userId){
+        QueryWrapper<Song> wrapper = new QueryWrapper<Song>().
+                eq("user_id",userId).
+                orderByDesc("create_time");
+        IPage<Song> songPage = songMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
+        return songPage;
+    }
     @Override
     public void playSongGuest(long songId, HttpServletResponse response) {
         Song songInfo = getSongById(songId);
