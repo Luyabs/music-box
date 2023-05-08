@@ -10,7 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -96,17 +95,5 @@ public class SongController {
                                      @RequestParam(defaultValue = "10")int pageSize,
                                      SongComment condition) {
         return Result.success().data("pages", songService.songCommentPage(song_id, pageNumber, pageSize, condition));
-    }
-
-    @Value("${file-url.song-base-url}")
-    private String baseUrl;     // 图片基地址
-
-    @GetMapping
-    public Result getAll() {
-        log.info("baseUrl: " + baseUrl);
-        log.info("baseUrl: " + baseUrl);
-        log.info("baseUrl: " + baseUrl);
-        log.info("baseUrl: " + baseUrl);
-        return Result.success().data("list", songService.list());
     }
 }
