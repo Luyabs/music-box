@@ -27,9 +27,8 @@ public interface SongMenuMapper extends BaseMapper<SongMenu> {
             )}
     )
     @Select("""
-            select s.*, s.id id4mapping
-            from song_menu s
-            join composition_song_menu_song c on s.id = c.song_menu_id
+            select *, id id4mapping
+            from song_menu
             ${ew.customSqlSegment}
             """)
     IPage<SongMenuDto> selectPageDto(Page<Object> objectPage, @Param(Constants.WRAPPER) QueryWrapper<SongMenuDto> queryWrapper);
