@@ -17,13 +17,13 @@ public class PostReply {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    @ApiModelProperty("记录id")
+    @ApiModelProperty("主题帖id")
     private Long postId;
 
-    @ApiModelProperty("记录id")
+    @ApiModelProperty("回复的用户id")
     private Long replyUserId;
 
-    @ApiModelProperty("记录id")
+    @ApiModelProperty("回复内容")
     private String commentsContent;
 
     @ApiModelProperty("记录id")

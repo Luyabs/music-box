@@ -1,6 +1,5 @@
 package com.example.musicbox.dto;
 
-import com.example.musicbox.entity.SongMenu;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @ApiModel(value = "专辑dto", description = "歌单 + 专辑dto")
-public class AlbumDto extends SongMenu {
+public class AlbumDto extends SongMenuDto {
     @ApiModelProperty("专辑简介")
     private String albumIntroduction;
 

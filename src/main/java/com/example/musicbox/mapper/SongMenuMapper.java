@@ -18,6 +18,19 @@ public interface SongMenuMapper extends BaseMapper<SongMenu> {
      * @param objectPage 分页
      * @param queryWrapper 查询条件
      * @return 歌单Dto
+     */
+    @Select("""
+            select *, id id4mapping
+            from song_menu
+            ${ew.customSqlSegment}
+            """)
+    IPage<SongMenuDto> selectPageDto(Page<Object> objectPage, @Param(Constants.WRAPPER) QueryWrapper<SongMenuDto> queryWrapper);
+
+
+    /**
+     * 按id查询 歌单Dto
+     * @param songMenuId 歌单id
+     * @return 歌单Dto
      * ResultMap: 按歌单id获取歌单中所有歌曲
      */
     @Results(id = "withSong", value = {
@@ -29,7 +42,8 @@ public interface SongMenuMapper extends BaseMapper<SongMenu> {
     @Select("""
             select *, id id4mapping
             from song_menu
-            ${ew.customSqlSegment}
+            where id = #{id}
+            and authority = 0
             """)
-    IPage<SongMenuDto> selectPageDto(Page<Object> objectPage, @Param(Constants.WRAPPER) QueryWrapper<SongMenuDto> queryWrapper);
+    SongMenuDto selectDtoById(@Param("id") long songMenuId);
 }
