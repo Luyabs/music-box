@@ -20,7 +20,7 @@ public interface SongMenuMapper extends BaseMapper<SongMenu> {
      * @return 歌单Dto
      */
     @Select("""
-            select *, id id4mapping
+            select *
             from song_menu
             ${ew.customSqlSegment}
             """)
