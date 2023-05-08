@@ -74,10 +74,10 @@ public class SongController {
     }
 
     @ApiOperation(value = "修改对指定歌曲的评论", notes = "[token] {comment_id}, content")
-    @PutMapping(value = "/comment/{comment_id}")
+    @PutMapping(value = "/comment")
     @NeedToken
-    public Result changeComment(@PathVariable long comment_id, String content) {
-        boolean res = songService.changeComment(comment_id, content);
+    public Result changeComment(@RequestBody SongComment comment) {
+        boolean res = songService.changeComment(comment);
         return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
     }
 

@@ -246,6 +246,12 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
             throw new ServiceException("不存在id=" + songId + "的歌曲");
         return songInfo;
     }
+    private SongComment getSongCommentById(long commentId) {
+        SongComment songCommentInfo = songCommentMapper.selectById(commentId);
+        if (songCommentInfo == null)
+            throw new ServiceException("不存在id=" + commentId + "的评论");
+        return songCommentInfo;
+    }
 
 
     /**
@@ -292,25 +298,33 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     }
 
     @Override
-    public boolean changeComment(long commentId, String content) {
+    public boolean changeComment(SongComment newComment) {
         long userId = UserInfo.get();
-        if (userId != songCommentMapper.selectById(commentId).getUserId()) {
+        SongComment oldComment = getSongCommentById(newComment.getId());
+        if (userId != oldComment.getUserId()) {
             throw new ServiceException("当前用户无权限修改他人评论");
         }
-        if (content == null || content.length() <= 0) {
+        if(oldComment.getStatus() < 0)
+            throw new ServiceException("评论状态异常，无法修改");
+        String content = newComment.getCommentsContent();
+        if ( content == null || content.length() <= 0) {
             throw new ServiceException("评论内容不允许为空");
         }
-        SongComment sc = new SongComment().setCommentsContent(content).setId(commentId);
-        return songCommentMapper.updateById(sc) > 0;
+        oldComment.setCommentsContent(content);//将评论内容赋给原对象
+        return songCommentMapper.updateById(oldComment) == 1;
     }
 
     @Override
     public boolean deleteComment(long commentId) {
         long userId = UserInfo.get();
-        if (userId != songCommentMapper.selectById(commentId).getUserId()) {
+        SongComment songComment = getSongCommentById(commentId);
+        if (userId != songComment.getUserId()) {
             throw new ServiceException("当前用户无权限删除他人评论");
         }
-        return songCommentMapper.deleteById(commentId) == 1;
+        if(songComment.getStatus() < 0)
+            throw new ServiceException("当前评论状态异常（删除/屏蔽）");
+        songComment.setStatus(-1);                                //修改状态为-1
+        return songCommentMapper.updateById(songComment) == 1;
     }
 
     @Override

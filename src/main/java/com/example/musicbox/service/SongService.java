@@ -22,8 +22,6 @@ public interface SongService extends IService<Song> {
 
     IPage<Song> pageSong(int currentPage, int pageSize, Song condition);         // 分页获取歌曲
 
-    //IPage<Song> pageSongByUserId(int currentPage, int pageSize, long userId);    // 根据用户id分页获取歌曲
-
     void playSongGuest(long songId, HttpServletResponse response);
 
     void playSongLogged(long songId, HttpServletResponse response);
@@ -34,11 +32,12 @@ public interface SongService extends IService<Song> {
 
     boolean saveComment(long songId, String content);                            //发布评论
 
-    boolean changeComment(long commentId, String content);                       //修改评论
+    boolean changeComment(SongComment comment);                                  //修改评论
 
     boolean deleteComment(long commentId);                                       //删除评论
 
-    IPage<SongComment> songCommentPage(long songId, int currentPage, int pageSize, SongComment conditon);     //分页获取指定id的歌曲评论
+    IPage<SongComment> songCommentPage(long songId, int currentPage,
+                                       int pageSize, SongComment conditon);     //分页获取指定id的歌曲评论
 
 
 }

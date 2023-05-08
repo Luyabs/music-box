@@ -26,7 +26,7 @@ public class SongComment {
     @ApiModelProperty("评论内容")
     private String commentsContent;
 
-    @ApiModelProperty("评论状态")
+    @ApiModelProperty("评论状态：-1：删除/屏蔽，0：正常")
     private Integer status;
 
     @ApiModelProperty("创建时间")
