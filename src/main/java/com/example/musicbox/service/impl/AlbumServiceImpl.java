@@ -5,14 +5,10 @@ import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.dto.AlbumDto;
 import com.example.musicbox.entity.Album;
-import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.SongMenu;
-import com.example.musicbox.entity.relation.SongMenuComposition;
-import com.example.musicbox.entity.relation.UserMenuCollection;
 import com.example.musicbox.mapper.AlbumMapper;
 import com.example.musicbox.mapper.SongMenuMapper;
 import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
-import com.example.musicbox.mapper.relation.UserMenuCollectionMapper;
 import com.example.musicbox.service.AlbumService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class AlbumServiceImpl extends ServiceImpl<AlbumMapper, Album> implements AlbumService {
-
     @Autowired
     private SongMenuMapper songMenuMapper;
     @Autowired
