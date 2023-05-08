@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -90,7 +91,22 @@ public class SongController {
 
     @ApiOperation(value = "分页获取指定id的歌曲评论", notes = "{song_id}, page_number, page_size, *条件 允许根据user_id和content查询")
     @GetMapping(value = "/comment/{song_id}")
-    public Result getSongCommentPage(@PathVariable long song_id, int pageNumber, int pageSize, SongComment condition) {
+    public Result getSongCommentPage(@PathVariable long song_id,
+                                     @RequestParam(defaultValue = "1")int pageNumber,
+                                     @RequestParam(defaultValue = "10")int pageSize,
+                                     SongComment condition) {
         return Result.success().data("pages", songService.songCommentPage(song_id, pageNumber, pageSize, condition));
+    }
+
+    @Value("${file-url.song-base-url}")
+    private String baseUrl;     // 图片基地址
+
+    @GetMapping
+    public Result getAll() {
+        log.info("baseUrl: " + baseUrl);
+        log.info("baseUrl: " + baseUrl);
+        log.info("baseUrl: " + baseUrl);
+        log.info("baseUrl: " + baseUrl);
+        return Result.success().data("list", songService.list());
     }
 }

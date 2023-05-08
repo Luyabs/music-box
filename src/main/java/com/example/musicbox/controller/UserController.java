@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "修改用户密码",notes = "[token]")
-    @PutMapping("/info/password")
+    @PostMapping("/info/password")
     @NeedToken
     public Result changeUserPassword(String newPassword){
         boolean res = userService.changeUserPassword(newPassword);

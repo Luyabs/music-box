@@ -22,7 +22,7 @@ public interface SongService extends IService<Song> {
 
     IPage<Song> pageSong(int currentPage, int pageSize, Song condition);         // 分页获取歌曲
 
-    IPage<Song> pageSongByUserId(int currentPage, int pageSize, long userId);    // 根据用户id分页获取歌曲
+    //IPage<Song> pageSongByUserId(int currentPage, int pageSize, long userId);    // 根据用户id分页获取歌曲
 
     void playSongGuest(long songId, HttpServletResponse response);
 

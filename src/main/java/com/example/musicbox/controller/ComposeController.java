@@ -47,11 +47,14 @@ public class ComposeController {
         return res?Result.success().message("上传歌曲封面成功"):Result.error().message("上传歌曲封面失败");
     }
 
-    @ApiOperation(value = "分页获取自己上传的歌曲",notes = "[token]需要传入页号，页大小")
+    @ApiOperation(value = "分页获取自己上传的歌曲",notes = "[token]需要传入页号，页大小，查询条件")
     @NeedToken
     @GetMapping("/page")
-    public Result getOwnUploadedSong(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize){
-        IPage<Song> songPage = songService.pageSongByUserId(pageNum, pageSize, UserInfo.get());
+    public Result getOwnUploadedSong(@RequestParam(defaultValue = "1") int pageNum,
+                                     @RequestParam(defaultValue = "10") int pageSize,
+                                     Song condition){
+        condition.setUserId(UserInfo.get());               //默认只能查询自己上传的歌曲
+        IPage<Song> songPage = songService.pageSong(pageNum, pageSize, condition);
         return Result.success().data("song_page", songPage);
 
     }

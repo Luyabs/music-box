@@ -188,19 +188,12 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     @Override
     public IPage<Song> pageSong(int currentPage, int pageSize, Song condition) {
         QueryWrapper<Song> wrapper = new QueryWrapper<Song>()
+                .eq(condition.getUserId() != null, "user_id", condition.getUserId())
                 .like(condition.getSingerName() != null, "singer_name", condition.getSingerName())
                 .like(condition.getSongName() != null, "song_name", condition.getSongName())
                 .like(condition.getLanguage() != null, "language", condition.getLanguage())
                 .like(condition.getClassification() != null, "classification", condition.getClassification())
                 .orderByDesc("update_time");
-        IPage<Song> songPage = songMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
-        return songPage;
-    }
-    @Override
-    public IPage<Song> pageSongByUserId(int currentPage, int pageSize, long userId){
-        QueryWrapper<Song> wrapper = new QueryWrapper<Song>().
-                eq("user_id",userId).
-                orderByDesc("create_time");
         IPage<Song> songPage = songMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
         return songPage;
     }
@@ -317,7 +310,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         if (userId != songCommentMapper.selectById(commentId).getUserId()) {
             throw new ServiceException("当前用户无权限删除他人评论");
         }
-        return songCommentMapper.deleteById(commentId) > 0;
+        return songCommentMapper.deleteById(commentId) == 1;
     }
 
     @Override
