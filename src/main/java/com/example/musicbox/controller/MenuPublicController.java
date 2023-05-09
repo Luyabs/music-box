@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Api("歌单")
+@Api("歌单/公共")
 @RequestMapping("/menu/public")
 public class MenuPublicController {
     @Autowired
@@ -35,7 +35,7 @@ public class MenuPublicController {
 
     @ApiOperation(value = "获取指定id公开的歌单 (或专辑) 信息 (需包含歌单中的歌曲)", notes = "会包含歌曲")
     @GetMapping("/{song_menu_id}}")
-    public Result pageAlbum(@PathVariable("song_menu_id") long songMenuId) {
+    public Result getDetailedSongMenu(@PathVariable("song_menu_id") long songMenuId) {
         SongMenuDto songMenuDto = songMenuService.getPublicSongMenuDtoById(songMenuId);
         return Result.success().data("detailed_menu", songMenuDto);
     }

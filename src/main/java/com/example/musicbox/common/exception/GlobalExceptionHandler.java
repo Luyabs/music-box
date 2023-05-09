@@ -56,6 +56,11 @@ public class GlobalExceptionHandler {
             log.error("[DataIntegrityViolationException] " + message);
             return Result.error().message(message);
         }
+        if (ex.getMessage().trim().startsWith("### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails")) {
+            String message = "不符合外键约束, 请检查传入的属性";
+            log.error("[DataIntegrityViolationException] " + message);
+            return Result.error().message(message);
+        }
         ex.printStackTrace();   // 未知错误
         return Result.error().message(ex.getMessage());
     }

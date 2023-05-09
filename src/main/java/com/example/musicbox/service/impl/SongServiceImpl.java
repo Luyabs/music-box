@@ -1,9 +1,8 @@
 package com.example.musicbox.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
@@ -11,20 +10,17 @@ import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.relation.SongComment;
 import com.example.musicbox.entity.relation.SongPlayRecord;
 import com.example.musicbox.mapper.SongMapper;
-import com.example.musicbox.mapper.relation.SongCommentMapper;
 import com.example.musicbox.mapper.UserMapper;
-import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
+import com.example.musicbox.mapper.relation.SongCommentMapper;
 import com.example.musicbox.mapper.relation.SongPlayRecordMapper;
 import com.example.musicbox.service.SongService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.stream.events.Comment;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
@@ -33,7 +29,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -338,4 +333,23 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         return songCommentPage;
     }
 
+    /**
+     * 用于校验歌曲是否存在且为公开/自己的
+     */
+    @Override
+    public Song isSongExistAndPublic(long songId) {
+        Song song = songMapper.selectById(songId);
+        if (song == null)
+            throw new ServiceException("不存在song_id=" + songId + "的歌曲");
+        switch (song.getStatus()) {
+            case -1 -> throw new ServiceException("song_id=" + songId + "的已被删除");
+            case 1 -> {
+                if (song.getUserId() != UserInfo.get())
+                    throw new ServiceException("song_id=" + songId + "的创作者未公开此曲");
+            }
+            case 0 -> {}
+            default -> throw new ServiceException("status=" + song.getStatus() + "不合法");
+        }
+        return song;
+    }
 }

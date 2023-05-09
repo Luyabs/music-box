@@ -40,4 +40,5 @@ public interface SongService extends IService<Song> {
                                        int pageSize, SongComment conditon);     //分页获取指定id的歌曲评论
 
 
+    Song isSongExistAndPublic(long songId);
 }
