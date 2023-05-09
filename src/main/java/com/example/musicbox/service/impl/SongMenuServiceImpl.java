@@ -8,12 +8,14 @@ import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.dto.AlbumDto;
 import com.example.musicbox.dto.SongMenuDto;
+import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.SongMenu;
 import com.example.musicbox.entity.relation.SongMenuComposition;
 import com.example.musicbox.mapper.AlbumMapper;
 import com.example.musicbox.mapper.SongMenuMapper;
 import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
+import com.example.musicbox.mapper.relation.SongPlayRecordMapper;
 import com.example.musicbox.service.SongMenuService;
 import com.example.musicbox.service.SongService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,9 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
 
     @Autowired
     private SongMenuCompositionMapper songMenuCompositionMapper;
+
+    @Autowired
+    private SongPlayRecordMapper songPlayRecordMapper;
 
     @Autowired
     private SongService songService;
@@ -190,5 +195,21 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
         SongMenu songMenu = getMySongMenuDtoById(songMenuId);// 仅作错误判断
         songMenu.setAuthority(Math.abs(1 - songMenu.getAuthority()));
         return songMenuMapper.updateById(songMenu) > 0;
+    }
+
+    /**
+     * 分页获取用户播放历史
+     * 目前只允许获取自己的播放历史
+     */
+    @Override
+    public IPage<Song> pageHistory(int currentPage, int pageSize) {
+        IPage<Song> songPage = songPlayRecordMapper.selectSongPageByUserId(UserInfo.get(), new Page<>(currentPage, pageSize));
+        return songPage;
+    }
+
+    @Override
+    public boolean removeHistory() {
+        songPlayRecordMapper.logicalDeleteHistory(UserInfo.get());
+        return true;    // 必定清除成功
     }
 }

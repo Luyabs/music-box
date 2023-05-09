@@ -2,23 +2,17 @@ package com.example.musicbox.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.musicbox.common.NeedToken;
+import com.example.musicbox.common.Result;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.dto.AlbumDto;
-import com.example.musicbox.entity.Album;
 import com.example.musicbox.entity.Song;
-import com.example.musicbox.common.Result;
-import com.example.musicbox.entity.SongMenu;
 import com.example.musicbox.service.AlbumService;
 import com.example.musicbox.service.SongService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
 
 
 @RestController

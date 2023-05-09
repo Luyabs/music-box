@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.musicbox.dto.AlbumDto;
 import com.example.musicbox.dto.SongMenuDto;
+import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.SongMenu;
 
 public interface SongMenuService extends IService<SongMenu> {
@@ -31,4 +32,8 @@ public interface SongMenuService extends IService<SongMenu> {
     boolean removeSongToSongMenu(long songId, long songMenuId);
 
     boolean reverseAuthority(long songMenuId);
+
+    IPage<Song> pageHistory(int currentPage, int pageSize);
+
+    boolean removeHistory();
 }
