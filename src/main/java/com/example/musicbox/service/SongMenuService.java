@@ -36,4 +36,10 @@ public interface SongMenuService extends IService<SongMenu> {
     IPage<Song> pageHistory(int currentPage, int pageSize);
 
     boolean removeHistory();
+
+    IPage<SongMenu> getCollectedSongMenuPage(int currentPage, int pageSize);
+
+    IPage<AlbumDto> getCollectedAlbumPage(int currentPage, int pageSize);
+
+    SongMenuDto getCollectedSongMenuDtoById(long songMenuId);
 }

@@ -11,16 +11,21 @@ import com.example.musicbox.dto.SongMenuDto;
 import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.SongMenu;
 import com.example.musicbox.entity.relation.SongMenuComposition;
+import com.example.musicbox.entity.relation.UserMenuCollection;
 import com.example.musicbox.mapper.AlbumMapper;
 import com.example.musicbox.mapper.SongMenuMapper;
 import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
 import com.example.musicbox.mapper.relation.SongPlayRecordMapper;
+import com.example.musicbox.mapper.relation.UserMenuCollectionMapper;
 import com.example.musicbox.service.SongMenuService;
 import com.example.musicbox.service.SongService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -42,6 +47,9 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private UserMenuCollectionMapper userMenuCollectionMapper;
 
     /**
      * 分页查询歌单 [公开的]
@@ -125,7 +133,7 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
     public SongMenuDto getMySongMenuDtoById(long songMenuId) {
         SongMenuDto songMenuDto = songMenuMapper.selectMyDtoById(songMenuId, UserInfo.get());
         if (songMenuDto == null)
-            throw new ServiceException("不存在或你没有权限修改 song_menu_id=" + songMenuId + "的歌单/专辑");
+            throw new ServiceException("不存在或你没有权限查看 song_menu_id=" + songMenuId + "的歌单/专辑");
         if (songMenuDto.getAuthority() == -1)
             throw new ServiceException("song_menu_id=" + songMenuId + "的歌单/专辑已被删除");
         return songMenuDto;
@@ -207,9 +215,68 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
         return songPage;
     }
 
+    /**
+     * 移除用户的历史播放记录 只置status = -1
+     */
     @Override
     public boolean removeHistory() {
         songPlayRecordMapper.logicalDeleteHistory(UserInfo.get());
         return true;    // 必定清除成功
     }
+
+    /**
+     * 分页获取收藏的歌单
+     */
+    @Override
+    public IPage<SongMenu> getCollectedSongMenuPage(int currentPage, int pageSize) {
+        List<Long> ids = getCollectedSongMenuIds(UserInfo.get());
+        IPage<SongMenu> songMenuPage = songMenuMapper.selectPage(new Page<>(currentPage, pageSize),
+                new QueryWrapper<SongMenu>()
+                        .in("id", ids)      // 收藏的
+                        .eq("is_album", false)   // 非专辑歌单
+                        .eq("authority", 0)     // 公开的
+        );
+        return songMenuPage;
+    }
+
+    /**
+     * 分页获取收藏的专辑
+     */
+    @Override
+    public IPage<AlbumDto> getCollectedAlbumPage(int currentPage, int pageSize) {
+        List<Long> ids = getCollectedSongMenuIds(UserInfo.get());
+        IPage<AlbumDto> albumPage = albumMapper.selectPageDto(new Page<>(currentPage, pageSize),
+                new QueryWrapper<AlbumDto>()
+                        .in("s.id", ids)      // 收藏的
+                        .eq("is_album", true)   // 专辑歌单
+                        .eq("authority", 0)     // 公开的
+        );
+        return albumPage;
+    }
+
+
+    @Override
+    public SongMenuDto getCollectedSongMenuDtoById(long songMenuId) {
+        SongMenuDto songMenuDto = songMenuMapper.selectCollectedDtoById(songMenuId, UserInfo.get());
+        if (songMenuDto == null)
+            throw new ServiceException("不存在或你没有权限查看 song_menu_id=" + songMenuId + "的歌单/专辑");
+        if (songMenuDto.getAuthority() == -1)
+            throw new ServiceException("song_menu_id=" + songMenuId + "的歌单/专辑已被删除");
+        return songMenuDto;
+    }
+
+    /**
+     * 获取 用户id收藏的歌单 的id列表
+     * @param userId 用户id
+     * @return 用户id收藏的歌单 的id列表
+     */
+    private List<Long> getCollectedSongMenuIds(long userId) {
+        List<UserMenuCollection> collections = userMenuCollectionMapper.selectList(new QueryWrapper<UserMenuCollection>().eq("user_id", userId));
+        List<Long> ids = new ArrayList<>();
+        for (UserMenuCollection collection : collections) {
+            ids.add(collection.getSongMenuId());
+        }
+        return ids;
+    }
+
 }

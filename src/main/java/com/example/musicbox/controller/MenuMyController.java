@@ -36,7 +36,7 @@ public class MenuMyController {
     }
 
     @NeedToken
-    @ApiOperation(value = "按id获取自己创建的歌单(包括)的信息 (含歌曲)", notes = "[包括专辑] 会包含歌曲")
+    @ApiOperation(value = "按id获取自己创建的歌单(包括专辑)的信息 (含歌曲)", notes = "[包括专辑] 会包含歌曲")
     @GetMapping("/{song_menu_id}}")
     public Result getDetailedSongMenu(@PathVariable("song_menu_id") long songMenuId) {
         SongMenuDto songMenuDto = songMenuService.getMySongMenuDtoById(songMenuId);

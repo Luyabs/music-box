@@ -44,4 +44,22 @@ public interface SongMenuMapper extends BaseMapper<SongMenu> {
             and authority != -1
             """)
     SongMenuDto selectMyDtoById(@Param("song_menu_id") long songMenuId, @Param("user_id") long userId);
+
+    /**
+     * 按id查询 [自己收藏的]歌单Dto
+     * @param songMenuId 歌单id
+     * @param userId 用户id
+     * @return 歌单Dto
+     */
+    @ResultMap("withSong")
+    @Select("""
+            select s.*, s.id id4mapping
+            from song_menu s
+            join collection_user_song_menu c
+            on s.id = c.song_menu_id
+            where s.id = #{song_menu_id}
+            and c.user_id = #{user_id}
+            and s.authority != -1
+            """)
+    SongMenuDto selectCollectedDtoById(@Param("song_menu_id") long songMenuId, @Param("user_id") long userId);
 }
