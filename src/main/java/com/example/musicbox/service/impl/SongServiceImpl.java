@@ -185,6 +185,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     public IPage<Song> pageSong(int currentPage, int pageSize, Song condition) {
         QueryWrapper<Song> wrapper = new QueryWrapper<Song>()
                 .eq(condition.getUserId() != null, "user_id", condition.getUserId())
+                .ge("status",0)
                 .like(condition.getSingerName() != null, "singer_name", condition.getSingerName())
                 .like(condition.getSongName() != null, "song_name", condition.getSongName())
                 .like(condition.getLanguage() != null, "language", condition.getLanguage())
