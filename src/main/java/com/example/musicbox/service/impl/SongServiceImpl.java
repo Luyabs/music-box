@@ -354,4 +354,12 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         }
         return song;
     }
+    @Override
+    public boolean changeSongIsVIP(long musicId){
+        Song song = getSongById(musicId);
+        if(!song.getUserId().equals(UserInfo.get()))
+            throw new ServiceException("当前用户无权限修改他人歌曲IsVIP");
+        song.setIsVip(!song.getIsVip());
+        return songMapper.updateById(song) == 1;
+    }
 }

@@ -39,6 +39,6 @@ public interface SongService extends IService<Song> {
     IPage<SongComment> songCommentPage(long songId, int currentPage,
                                        int pageSize, SongComment conditon);     //分页获取指定id的歌曲评论
 
-
+    boolean changeSongIsVIP(long musicId);                                      //更改歌曲是否为VIP歌曲
     Song isSongExistAndPublic(long songId);
 }

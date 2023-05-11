@@ -22,11 +22,15 @@ public class Post {
    @ApiModelProperty("帖子创建者id")
     private Long userId;
 
-   @ApiModelProperty("帖子状态")
+    @ApiModelProperty("帖子内容")
+    private String content;
+
+   @ApiModelProperty("帖子状态：" +
+           "-1为被删/异常：0，1,2分别代表所有人可见，部分人可见，仅自己可见")
     private Integer status ;
 
    @ApiModelProperty("帖子主题")
-    private Integer subject ;
+    private String subject ;
 
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)

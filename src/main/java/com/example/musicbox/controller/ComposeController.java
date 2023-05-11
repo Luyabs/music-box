@@ -98,4 +98,12 @@ public class ComposeController {
         boolean res = albumService.deleteAlbum(musicMenuId);
         return res?Result.success().message("删除专辑成功"):Result.error().message("删除专辑失败");
     }
+
+    @ApiOperation(value = "更改歌曲是否为VIP歌曲",notes = "[token]，传入歌曲id，true则改false，false则改true")
+    @NeedToken
+    @PostMapping("/song/to_vip/{music_id}")
+    public Result changeSongIsVIP(@PathVariable("music_id") long musicId){
+        boolean res = songService.changeSongIsVIP(musicId);
+        return res?Result.success().message("更改歌曲是否为VIP歌曲成功"):Result.error().message("更改歌曲是否为VIP歌曲失败");
+    }
 }
