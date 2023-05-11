@@ -145,7 +145,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         if (song.getStatus() < 0)
             throw new ServiceException("歌曲状态异常，用户无法删除歌曲");
         song.setStatus(-1);                                                 //更新歌曲状态为-1
-        return songCommentMapper.update(songComment, wrapper) > 0 &&
+        return songCommentMapper.update(songComment, wrapper) >=0 &&
                 songMapper.updateById(song) == 1;
     }
 
@@ -155,9 +155,10 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         Song originSong = getSongById(newSong.getId());           //查找被修改的歌曲状态
         if (originSong.getStatus() < 0)
             throw new ServiceException("歌曲状态异常，用户无法修改歌曲信息");
-        if (!newSong.getUserId().equals(userId))     //若需要修改信息的歌曲的用户id和当前请求的用户id不符，抛异常
+        if (!originSong.getUserId().equals(userId))     //若需要修改信息的歌曲的用户id和当前请求的用户id不符，抛异常
             throw new ServiceException("当前用户无权限修改他人歌曲/无法修改上传者id");
-        newSong.setFileDirectory(null).             //歌曲路径无法修改
+        newSong.setUserId(UserInfo.get()).          //歌曲用户无法修改
+                setFileDirectory(null).             //歌曲路径无法修改
                 setStatus(null).                    //歌曲状态无法修改
                 setCreateTime(null).                //歌曲建立时间无法修改
                 setCoverPicture(null);              //歌曲封面无法修改

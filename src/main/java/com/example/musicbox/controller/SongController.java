@@ -72,7 +72,8 @@ public class SongController {
         return res ? Result.success().message("发布成功") : Result.error().message("发布失败");
     }
 
-    @ApiOperation(value = "修改对指定歌曲的评论", notes = "[token] {comment_id}, content")
+    @ApiOperation(value = "修改对指定歌曲的评论", notes = "[token] {comment_id}, content。" +
+            "歌曲id、所属用户、文件路径、封面、状态、记录创建时间无法修改，其他都可改")
     @PutMapping(value = "/comment")
     @NeedToken
     public Result changeComment(@RequestBody SongComment comment) {
