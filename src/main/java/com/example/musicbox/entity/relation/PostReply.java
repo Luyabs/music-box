@@ -23,6 +23,9 @@ public class PostReply {
     @ApiModelProperty("回复的用户id")
     private Long replyUserId;
 
+    @ApiModelProperty("回复的评论id：若为0(默认)，则代表回复的是帖子")
+    private Long replyId;
+
     @ApiModelProperty("回复内容")
     private String commentsContent;
 
