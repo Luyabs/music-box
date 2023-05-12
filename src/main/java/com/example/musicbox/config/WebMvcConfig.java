@@ -41,7 +41,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("/cover/**").addResourceLocations("file:///" + coverBaseUrl);
+        // 已使用nginx分离 /cover 目录的静态资源(不再用本项目的端口开放/cover/**)，若没配置nginx则取消注释
+        // registry.addResourceHandler("/cover/**").addResourceLocations("file:///" + coverBaseUrl);
 
         // knife4j
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");

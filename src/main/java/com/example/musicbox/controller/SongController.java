@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
 @Slf4j
 @RestController
 @Api("歌曲")
@@ -36,32 +34,35 @@ public class SongController {
         return Result.success().data("song_info", songInfo);
     }
 
-    @ApiOperation(value = "播放指定id歌曲 [未登录状态]", notes = "请直接在浏览器输入URL来测试这项 [无法下载VIP歌曲]")
+    /**
+     * ! 本项目已将动态文件传输部分分离到另一个项目(端口7070, 可通过代理8000端口访问)中 可在src/main/resources/music-box-file-exchanging.zip中查看
+     */
+/*    @ApiOperation(value = "播放指定id歌曲 [未登录状态]", notes = "请直接在浏览器输入URL来测试这项 [无法下载VIP歌曲]")
     @GetMapping("/play/guest/{song_id}")
-    public void playSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
+    public void playSongGuest(@PathVariable("song_id") long songId, HttpServletResponse response) {
         songService.playSongGuest(songId, response);
     }
 
     @ApiOperation(value = "播放指定id歌曲 [限登录状态]", notes = "[需要token] 请直接在浏览器输入URL来测试这项(较难测试)")
     @NeedToken
     @GetMapping("/play/logged/{song_id}")
-    public void playVipSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
+    public void playSongLogged(@PathVariable("song_id") long songId, HttpServletResponse response) {
         songService.playSongLogged(songId, response);
     }
 
 
     @ApiOperation(value = "下载指定id歌曲 [未登录状态]", notes = "请直接在浏览器输入URL来测试这项 [无法下载VIP歌曲]")
     @GetMapping("/download/guest/{song_id}")
-    public void downloadSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
+    public void downloadSongGuest(@PathVariable("song_id") long songId, HttpServletResponse response) {
         songService.downloadSongGuest(songId, response);
     }
 
     @ApiOperation(value = "下载指定id歌曲 [限登录状态]", notes = "[需要token]")
     @NeedToken
     @GetMapping("/download/logged/{song_id}")
-    public void downloadVipSong(@PathVariable("song_id") long songId, HttpServletResponse response) {
+    public void downloadSongLogged(@PathVariable("song_id") long songId, HttpServletResponse response) {
         songService.downloadSongLogged(songId, response);
-    }
+    }*/
 
 
     @ApiOperation(value = "发表对指定歌曲的评论", notes = "[token] {song_id}, content")
