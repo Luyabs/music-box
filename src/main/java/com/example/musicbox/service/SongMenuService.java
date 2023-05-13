@@ -42,4 +42,7 @@ public interface SongMenuService extends IService<SongMenu> {
     IPage<AlbumDto> getCollectedAlbumPage(int currentPage, int pageSize);
 
     SongMenuDto getCollectedSongMenuDtoById(long songMenuId);
+
+    boolean collectSongMenu(long songMenuId);                     //用户收藏歌单
+    boolean cancelCollectSongMenu(long songMenuId);               //用户取消收藏歌单
 }

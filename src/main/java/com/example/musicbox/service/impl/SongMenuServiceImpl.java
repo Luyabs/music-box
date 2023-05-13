@@ -278,5 +278,40 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
         }
         return ids;
     }
+    @Override
+    public boolean collectSongMenu(long songMenuId){
+        SongMenu songMenu = getSongMenuById(songMenuId);
+        if(songMenu.getAuthority() < 0)
+            throw new ServiceException("歌单状态异常，无法被收藏");
+        if(songMenu.getAuthority() > 0)
+            throw new ServiceException("歌单为私有歌单，无法被收藏");
+        if(userMenuCollectionMapper.getIfUserCollectMenu(UserInfo.get(),songMenuId) > 0)
+            throw new ServiceException("当前歌单已被收藏，无法被再次收藏");
+        UserMenuCollection userMenuCollection = new UserMenuCollection().
+                setUserId(UserInfo.get()).
+                setSongMenuId(songMenuId);
+        return userMenuCollectionMapper.insert(userMenuCollection) == 1;
+    }
+    @Override
+    public boolean cancelCollectSongMenu(long songMenuId){
+        SongMenu songMenu = getSongMenuById(songMenuId);
+        if(songMenu.getAuthority() < 0)
+            throw new ServiceException("歌单状态异常，无法被取消收藏");
+        if(songMenu.getAuthority() > 0)
+            throw new ServiceException("歌单为私有歌单，无法被取消收藏");
+        if(userMenuCollectionMapper.getIfUserCollectMenu(UserInfo.get(),songMenuId) == 0)
+            throw new ServiceException("当前歌单未被收藏，无法被再次取消收藏");
+        QueryWrapper<UserMenuCollection> wrapper = new QueryWrapper<UserMenuCollection>().
+                eq("user_id",UserInfo.get()).
+                eq("song_menu_id",songMenuId);
+        return userMenuCollectionMapper.delete(wrapper) == 1;           //删除收藏记录
+    }
+    private SongMenu getSongMenuById(long songMenuId){
+        SongMenu songMenuInfo = songMenuMapper.selectById(songMenuId);
+        if(songMenuInfo == null){
+            throw new ServiceException("不存在id = "+songMenuId+"的歌单");
+        }
+        return songMenuInfo;
+    }
 
 }

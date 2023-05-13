@@ -42,4 +42,20 @@ public class MenuCollectController {
         SongMenuDto songMenuDto = songMenuService.getCollectedSongMenuDtoById(songMenuId);
         return Result.success().data("detailed_menu", songMenuDto);
     }
+    @NeedToken
+    @ApiOperation(value = "收藏歌单 (或专辑)", notes = "[token] {song_menu_id}（自己可以收藏自己创建的歌单）")
+    @PostMapping("/{song_menu_id}}")
+    public Result collectSongMenu(@PathVariable("song_menu_id") long songMenuId){
+        boolean res = songMenuService.collectSongMenu(songMenuId);
+        return res ? Result.success().message("收藏歌单成功") : Result.error().message("收藏歌单失败");
+    }
+
+    @NeedToken
+    @ApiOperation(value = "不再收藏歌单 (或专辑)", notes = "[token] {song_menu_id}（自己可以不收藏自己创建的歌单）")
+    @DeleteMapping("/{song_menu_id}}")
+    public Result cancelCollectMenu(@PathVariable("song_menu_id") long songMenuId){
+        boolean res = songMenuService.cancelCollectSongMenu(songMenuId);
+        return res ? Result.success().message("取消收藏歌单成功") : Result.error().message("取消收藏歌单失败");
+    }
+
 }
