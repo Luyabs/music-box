@@ -6,8 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
-import com.example.musicbox.dto.AlbumDto;
-import com.example.musicbox.dto.SongMenuDto;
+import com.example.musicbox.dto.*;
 import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.SongMenu;
 import com.example.musicbox.entity.relation.SongMenuComposition;
@@ -305,6 +304,36 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
                 eq("user_id",UserInfo.get()).
                 eq("song_menu_id",songMenuId);
         return userMenuCollectionMapper.delete(wrapper) == 1;           //删除收藏记录
+    }
+    @Override
+    public IPage<SongDto> getPlaylistByPlayVolume(int currentPage, int pageSize,
+                                                  int days, long minPlayVolume){
+        IPage<SongDto> songDtoIPage = songPlayRecordMapper.
+                selectSongToplistByPlayVolume(days,minPlayVolume,new Page<>(currentPage, pageSize));
+        return songDtoIPage;
+    }
+
+    @Override
+    public IPage<SongDto> getPlaylistByCollection(int currentPage, int pageSize,
+                                                  int days, long minCollection){
+        IPage<SongDto> songDtoIPage = userMenuCollectionMapper.
+                getSongListByCollection(days,minCollection,new Page<>(currentPage, pageSize));
+        return songDtoIPage;
+    }
+    @Override
+    public IPage<SongMenuDtowithCollection> getTopSongMenuList(int currentPage, int pageSize,
+                                                               int days, long minCollection){
+        IPage<SongMenuDtowithCollection> songMenuDtoIPage = userMenuCollectionMapper.
+                getSongMenuListByCollection(days,minCollection,new Page<>(currentPage, pageSize));
+        return songMenuDtoIPage;
+    }
+
+    @Override
+    public IPage<SongMenuDtowithCollection> getTopAlbumList (int currentPage, int pageSize,
+                                                          int days, long minCollection){
+        IPage<SongMenuDtowithCollection> albumDtoIPage = userMenuCollectionMapper.
+                getAlbumListByCollection(days,minCollection,new Page<>(currentPage, pageSize));
+                return albumDtoIPage;
     }
     private SongMenu getSongMenuById(long songMenuId){
         SongMenu songMenuInfo = songMenuMapper.selectById(songMenuId);
