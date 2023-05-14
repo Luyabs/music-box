@@ -63,8 +63,6 @@ public class SongController {
     public void downloadSongLogged(@PathVariable("song_id") long songId, HttpServletResponse response) {
         songService.downloadSongLogged(songId, response);
     }*/
-
-
     @ApiOperation(value = "发表对指定歌曲的评论", notes = "[token] {song_id}, content")
     @PostMapping(value = "/comment/{song_id}")
     @NeedToken
@@ -93,9 +91,18 @@ public class SongController {
     @ApiOperation(value = "分页获取指定id的歌曲评论", notes = "{song_id}, page_number, page_size, *条件 允许根据user_id和content查询")
     @GetMapping(value = "/comment/{song_id}")
     public Result getSongCommentPage(@PathVariable long song_id,
-                                     @RequestParam(defaultValue = "1")int pageNumber,
-                                     @RequestParam(defaultValue = "10")int pageSize,
+                                     @RequestParam(defaultValue = "1") int pageNumber,
+                                     @RequestParam(defaultValue = "10") int pageSize,
                                      SongComment condition) {
         return Result.success().data("pages", songService.songCommentPage(song_id, pageNumber, pageSize, condition));
     }
+
+    @ApiOperation(value = "收藏歌曲到指定歌单", notes = "[token] songId, songMenuId")
+    @PostMapping("/collect")
+    @NeedToken
+    public Result collectSongToMenu(@RequestParam long songId, @RequestParam long songMenuId) {
+        boolean res = songService.collectSongToMenu(songId, songMenuId);
+        return res ? Result.success().message("添加成功") : Result.error().message("添加失败");
+    }
+
 }

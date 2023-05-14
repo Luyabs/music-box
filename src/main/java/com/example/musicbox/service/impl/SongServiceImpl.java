@@ -7,11 +7,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.Song;
+import com.example.musicbox.entity.SongMenu;
 import com.example.musicbox.entity.relation.SongComment;
+import com.example.musicbox.entity.relation.SongMenuComposition;
 import com.example.musicbox.entity.relation.SongPlayRecord;
 import com.example.musicbox.mapper.SongMapper;
+import com.example.musicbox.mapper.SongMenuMapper;
 import com.example.musicbox.mapper.UserMapper;
 import com.example.musicbox.mapper.relation.SongCommentMapper;
+import com.example.musicbox.mapper.relation.SongMenuCompositionMapper;
 import com.example.musicbox.mapper.relation.SongPlayRecordMapper;
 import com.example.musicbox.service.SongService;
 import lombok.SneakyThrows;
@@ -43,6 +47,12 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
 
     @Autowired
     private SongPlayRecordMapper songPlayRecordMapper;
+
+    @Autowired
+    private SongMenuMapper songMenuMapper;
+
+    @Autowired
+    private SongMenuCompositionMapper songMenuCompositionMapper;
 
     @Value("${file-url.song-base-url}")
     private String songBaseUrl;     // 音乐上传地址
@@ -145,7 +155,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         if (song.getStatus() < 0)
             throw new ServiceException("歌曲状态异常，用户无法删除歌曲");
         song.setStatus(-1);                                                 //更新歌曲状态为-1
-        return songCommentMapper.update(songComment, wrapper) >=0 &&
+        return songCommentMapper.update(songComment, wrapper) >= 0 &&
                 songMapper.updateById(song) == 1;
     }
 
@@ -185,7 +195,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
     public IPage<Song> pageSong(int currentPage, int pageSize, Song condition) {
         QueryWrapper<Song> wrapper = new QueryWrapper<Song>()
                 .eq(condition.getUserId() != null, "user_id", condition.getUserId())
-                .ge("status",0)
+                .ge("status", 0)
                 .like(condition.getSingerName() != null, "singer_name", condition.getSingerName())
                 .like(condition.getSongName() != null, "song_name", condition.getSongName())
                 .like(condition.getLanguage() != null, "language", condition.getLanguage())
@@ -194,6 +204,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         IPage<Song> songPage = songMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
         return songPage;
     }
+
     @Override
     public void playSongGuest(long songId, HttpServletResponse response) {
         Song songInfo = getSongById(songId);
@@ -243,6 +254,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
             throw new ServiceException("不存在id=" + songId + "的歌曲");
         return songInfo;
     }
+
     private SongComment getSongCommentById(long commentId) {
         SongComment songCommentInfo = songCommentMapper.selectById(commentId);
         if (songCommentInfo == null)
@@ -301,10 +313,10 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         if (userId != oldComment.getUserId()) {
             throw new ServiceException("当前用户无权限修改他人评论");
         }
-        if(oldComment.getStatus() < 0)
+        if (oldComment.getStatus() < 0)
             throw new ServiceException("评论状态异常，无法修改");
         String content = newComment.getCommentsContent();
-        if ( content == null || content.length() <= 0) {
+        if (content == null || content.length() <= 0) {
             throw new ServiceException("评论内容不允许为空");
         }
         oldComment.setCommentsContent(content);//将评论内容赋给原对象
@@ -318,7 +330,7 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         if (userId != songComment.getUserId()) {
             throw new ServiceException("当前用户无权限删除他人评论");
         }
-        if(songComment.getStatus() < 0)
+        if (songComment.getStatus() < 0)
             throw new ServiceException("当前评论状态异常（删除/屏蔽）");
         songComment.setStatus(-1);                                //修改状态为-1
         return songCommentMapper.updateById(songComment) == 1;
@@ -349,17 +361,36 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
                 if (song.getUserId() != UserInfo.get())
                     throw new ServiceException("song_id=" + songId + "的创作者未公开此曲");
             }
-            case 0 -> {}
+            case 0 -> {
+            }
             default -> throw new ServiceException("status=" + song.getStatus() + "不合法");
         }
         return song;
     }
+
     @Override
-    public boolean changeSongIsVIP(long musicId){
+    public boolean changeSongIsVIP(long musicId) {
         Song song = getSongById(musicId);
-        if(!song.getUserId().equals(UserInfo.get()))
+        if (!song.getUserId().equals(UserInfo.get()))
             throw new ServiceException("当前用户无权限修改他人歌曲IsVIP");
         song.setIsVip(!song.getIsVip());
         return songMapper.updateById(song) == 1;
+    }
+
+    @Override
+    public boolean collectSongToMenu(long songId, long songMenuId) {
+        long userId = UserInfo.get();
+        SongMenu songMenu = songMenuMapper.selectById(songMenuId);
+        if (songMenu == null || songMenu.getAuthority()<0) {
+            throw new ServiceException("歌单状态异常或不存在");
+        }
+        if (songMenu.getUserId() != userId) {
+            throw new ServiceException("用户无权修改他人歌单内容");
+        }
+        if (songMenuCompositionMapper.selectOne(new QueryWrapper<SongMenuComposition>().eq("song_menu_id",songMenuId).eq("song_id",songId))!=null) {
+            throw new ServiceException("不允许重复收藏");
+        }
+        SongMenuComposition songMenuComposition = new SongMenuComposition().setId(null).setSongMenuId(songMenuId).setSongId(songId).setSongPriority(null);
+        return songMenuCompositionMapper.insert(songMenuComposition) > 0;
     }
 }

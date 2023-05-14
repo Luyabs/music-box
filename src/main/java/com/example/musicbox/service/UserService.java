@@ -24,4 +24,10 @@ public interface UserService extends IService<User> {
     boolean upgradeToVIP(); //升级为VIP用户
 
     boolean upgradeToCreator();//升级为创作者
+
+    Map<String, Object> getOthersPublicInfo(long id);  //获取其他用户的公开信息
+
+    Map<String, Object> getUserInfoAdmin(long id);  //[管理员] 获取指定用户信息
+
+    boolean changeUserStatus(User user);
 }

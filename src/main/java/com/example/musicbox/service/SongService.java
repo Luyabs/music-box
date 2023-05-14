@@ -12,7 +12,7 @@ public interface SongService extends IService<Song> {
 
     boolean upLoadSongFile(MultipartFile songFile);                             //上传新歌曲文件
 
-    boolean upLoadSongCover(MultipartFile songCoverFile,Long songID);           //上传（修改）歌曲封面
+    boolean upLoadSongCover(MultipartFile songCoverFile, Long songID);           //上传（修改）歌曲封面
 
     boolean changeOwnSongInfo(Song newSong);                                    //修改用户自己上传的歌曲信息
 
@@ -40,5 +40,8 @@ public interface SongService extends IService<Song> {
                                        int pageSize, SongComment conditon);     //分页获取指定id的歌曲评论
 
     boolean changeSongIsVIP(long musicId);                                      //更改歌曲是否为VIP歌曲
+
     Song isSongExistAndPublic(long songId);
+
+    boolean collectSongToMenu(long songId, long songMenuId);                    //收藏歌曲到歌单
 }
