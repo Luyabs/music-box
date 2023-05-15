@@ -8,9 +8,12 @@ import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.AbstractUser;
 import com.example.musicbox.entity.Creator;
 import com.example.musicbox.entity.User;
+import com.example.musicbox.entity.relation.UserSubscription;
 import com.example.musicbox.mapper.AbstractUserMapper;
+import com.example.musicbox.mapper.AdministratorMapper;
 import com.example.musicbox.mapper.CreatorMapper;
 import com.example.musicbox.mapper.UserMapper;
+import com.example.musicbox.mapper.relation.UserSubscriptionMapper;
 import com.example.musicbox.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private CreatorMapper creatorMapper;
+
+    @Autowired
+    private AdministratorMapper administratorMapper;
 
     @Override
     public String login(String username, String password) {
@@ -84,7 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User userDetail = userMapper.selectById(userId);
 
         map.put("_user_id", userId);
-        if (user!= null && user.getUsername() != null)
+        if (user != null && user.getUsername() != null)
             map.put("_username", user.getUsername());
         if (userDetail != null)
             map.put("detailed_info", userDetail);
@@ -92,7 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public boolean changeUserDetailedInfo(User user){
+    public boolean changeUserDetailedInfo(User user) {
         user.setId(UserInfo.get()); // 忽略用户传的id
         user.setAvatar(null).setStatus(null).setIsCreator(null).setIsVip(null).setCreateTime(null);   // 忽略不该更改的属性
         return userMapper.updateById(user) > 0; // 一般不会传false
@@ -105,8 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user.getIsCreator()) {  //判断是否为创作者
             creator.setCreateTime(null);   // 忽略不该更改的属性
             return creatorMapper.updateById(creator) > 0;
-        }
-        else {
+        } else {
             throw new ServiceException("该用户不是创作者");
         }
     }
@@ -115,11 +120,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean changeUserPassword(String newPassword) {
         AbstractUser abstractUser = abstractUserMapper.selectById(UserInfo.get());
         String oldPassword = abstractUser.getPassword();    //得到用户的旧密码
-        if (newPassword == null ||newPassword.length() < 6)
+        if (newPassword == null || newPassword.length() < 6)
             throw new ServiceException("密码需要大于6位");
-        if(oldPassword.equals(newPassword))                 //判断新旧密码是否一致
+        if (oldPassword.equals(newPassword))                 //判断新旧密码是否一致
             throw new ServiceException("新旧密码不能一致");
-        else{
+        else {
             abstractUser.setPassword(newPassword);
             return abstractUserMapper.updateById(abstractUser) > 0;
         }
@@ -129,9 +134,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean upgradeToVIP() {
         User user = userMapper.selectById(UserInfo.get());
         Boolean isVIP = user.getIsVip();
-        if(isVIP == null)
+        if (isVIP == null)
             throw new ServiceException("isVIP为空");
-        if(isVIP)               //判断当前是否已经是VIP
+        if (isVIP)               //判断当前是否已经是VIP
             throw new ServiceException("当前用户已经是VIP");
         else
             user.setIsVip(true);
@@ -143,16 +148,66 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean upgradeToCreator() {
         User user = userMapper.selectById(UserInfo.get());
         Boolean isCreator = user.getIsCreator();
-        if(isCreator == null)
+        if (isCreator == null)
             throw new ServiceException("isCreator为空");
-        if(isCreator)
+        if (isCreator)
             throw new ServiceException("当前用户已经是创作者");
-        else{
+        else {
             user.setIsCreator(true);
             int res1 = userMapper.updateById(user);     //更新user表
             Creator newCreator = new Creator().setId(UserInfo.get());//将该用户插入到creator表中
             int res2 = creatorMapper.insert(newCreator);
             return res1 > 0 && res2 > 0;
         }
+    }
+
+    @Override
+    public Map<String, Object> getOthersPublicInfo(long id) {
+        HashMap<String, Object> map = new HashMap<>();
+        AbstractUser abstractUser = abstractUserMapper.selectById(id);
+        User user = userMapper.selectById(id);
+        if (user.getStatus() < 0) {
+            throw new ServiceException("用户状态异常");
+        }
+
+//        map.put("_user_id",id);    //id是否视作公开信息?
+        if (abstractUser != null && abstractUser.getUsername() != null) {
+            map.put("_username", abstractUser.getUsername());
+        }
+        if (user != null) {
+            map.put("public_info", user);
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> getUserInfoAdmin(long id) {
+        long myId = UserInfo.get();
+        if (administratorMapper.selectById(myId) == null) {
+            throw new ServiceException("用户无管理员权限");
+        }
+
+        HashMap<String, Object> map = new HashMap<>();
+        AbstractUser abstractUser = abstractUserMapper.selectById(id);
+        User user = userMapper.selectById(id);
+
+        map.put("_user_id", id);
+        if (abstractUser != null && abstractUser.getUsername() != null) {
+            map.put("_username", abstractUser.getUsername());
+        }
+        if (user != null) {
+            map.put("public_info", user);
+        }
+        return map;
+    }
+
+    @Override
+    public boolean changeUserStatus(User user) {
+        long myId = UserInfo.get();
+        if (administratorMapper.selectById(myId) == null) {
+            throw new ServiceException("用户无管理员权限");
+        }
+        User newUser = new User().setId(user.getId()).setStatus(user.getStatus());  //此处只允许修改用户状态
+        return userMapper.updateById(newUser) > 0;
     }
 }

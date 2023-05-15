@@ -61,10 +61,10 @@ public class UserController {
         return Result.success().data(info);
     }
 
-    @ApiOperation(value = "修改用户信息",notes = "[token] 无效属性id, avatar, status, is_creator, is_vip, create_time, update_time")
+    @ApiOperation(value = "修改用户信息", notes = "[token] 无效属性id, avatar, status, is_creator, is_vip, create_time, update_time")
     @PutMapping("/info")
     @NeedToken
-    public Result changeUserDetailedInfo(@RequestBody User user){
+    public Result changeUserDetailedInfo(@RequestBody User user) {
         boolean res = userService.changeUserDetailedInfo(user);
         return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
     }
@@ -72,32 +72,53 @@ public class UserController {
     @ApiOperation(value = "修改用户作为创作者的信息", notes = "[token] 无效属性id, creatorIntroduction, stageName, representativeWork, performingExperience, majorAchievement, brokerageCompany")
     @PutMapping("/info/creator")
     @NeedToken
-    public Result changeCreatorDetailedInfo(@RequestBody Creator creator){
+    public Result changeCreatorDetailedInfo(@RequestBody Creator creator) {
         boolean res = userService.changeCreatorDetailedInfo(creator);
         return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
     }
 
-    @ApiOperation(value = "修改用户密码",notes = "[token]")
+    @ApiOperation(value = "修改用户密码", notes = "[token]")
     @PostMapping("/info/password")
     @NeedToken
-    public Result changeUserPassword(String newPassword){
+    public Result changeUserPassword(String newPassword) {
         boolean res = userService.changeUserPassword(newPassword);
         return res ? Result.success().message("修改密码成功") : Result.error().message("修改密码失败");
     }
 
-    @ApiOperation(value = "升级用户为VIP",notes = "[token]无参数传入")
+    @ApiOperation(value = "升级用户为VIP", notes = "[token]无参数传入")
     @PostMapping("/upgrade/vip")
     @NeedToken
-    public Result upgradeToVIP(){
+    public Result upgradeToVIP() {
         boolean res = userService.upgradeToVIP();
         return res ? Result.success().message("升级VIP成功") : Result.error().message("升级VIP失败");
     }
 
-    @ApiOperation(value = "升级用户为创作者",notes = "[token]无参数传入")
+    @ApiOperation(value = "升级用户为创作者", notes = "[token]无参数传入")
     @PostMapping("/upgrade/creator")
     @NeedToken
-    public Result upgradeToCreator(){
+    public Result upgradeToCreator() {
         boolean res = userService.upgradeToCreator();
         return res ? Result.success().message("升级为创作者成功") : Result.error().message("升级为创作者失败");
+    }
+
+    @ApiOperation(value = "获取他人的公开信息", notes = "{id}")
+    @GetMapping("/visit/{id}")
+    public Result getOthersPublicInfo(@PathVariable long id) {
+        return Result.success().data(userService.getOthersPublicInfo(id));
+    }
+
+    @ApiOperation(value = "管理员获取指定用户信息", notes = "[token] [Admin]")
+    @GetMapping("/info/{id}")
+    @NeedToken
+    public Result getUserInfoAdmin(@PathVariable long id) {
+        return Result.success().data(userService.getUserInfoAdmin(id));
+    }
+
+    @ApiOperation(value = "管理员修改指定用户状态", notes = "[token] [Admin] 此处无论传入几个参数，只有Status有效")
+    @PutMapping("/status")
+    @NeedToken
+    public Result changeUserStatus(@RequestBody User user) {
+        boolean res = userService.changeUserStatus(user);
+        return res ? Result.success().message("修改成功") : Result.error().message("修改失败");
     }
 }
