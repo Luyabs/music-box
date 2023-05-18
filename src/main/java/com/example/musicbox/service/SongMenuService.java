@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.musicbox.dto.*;
 import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.SongMenu;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface SongMenuService extends IService<SongMenu> {
 
@@ -54,4 +55,5 @@ public interface SongMenuService extends IService<SongMenu> {
                                                         int days, long collection);//获取近日收藏量最多的歌单
     IPage<SongMenuDtowithCollection> getTopAlbumList (int currentPage, int pageSize,
                                                    int days, long collection);//获取近日收藏量最多的专辑
+    boolean upLoadSongMenuCover(MultipartFile songMenuCoverFile, Long menuID);           //上传（修改）歌单（专辑）封面
 }

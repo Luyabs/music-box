@@ -393,4 +393,6 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         SongMenuComposition songMenuComposition = new SongMenuComposition().setId(null).setSongMenuId(songMenuId).setSongId(songId).setSongPriority(null);
         return songMenuCompositionMapper.insert(songMenuComposition) > 0;
     }
+
+
 }

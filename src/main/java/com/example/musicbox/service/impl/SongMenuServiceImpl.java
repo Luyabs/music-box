@@ -21,10 +21,14 @@ import com.example.musicbox.service.SongMenuService;
 import com.example.musicbox.service.SongService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -50,6 +54,8 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
     @Autowired
     private UserMenuCollectionMapper userMenuCollectionMapper;
 
+    @Value("${file-url.menu-cover-base-url}")
+    private String menuCoverBaseUrl;                    //歌单/专辑封面上传地址
     /**
      * 分页查询歌单 [公开的]
      */
@@ -335,6 +341,46 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
                 getAlbumListByCollection(days,minCollection,new Page<>(currentPage, pageSize));
                 return albumDtoIPage;
     }
+
+    @Override
+    public boolean upLoadSongMenuCover(MultipartFile songMenuCoverFile, Long menuID){
+        new File(menuCoverBaseUrl).mkdirs();  // 没有文件夹就创一个
+
+        String originFileName = songMenuCoverFile.getOriginalFilename();   //原文件名
+        String newFileName;      //新文件名
+        String prefix;           //后缀名
+        File localFile;          //本地文件对象
+        int index;
+        SongMenu songMenu;
+        songMenu = getSongMenuById(menuID);
+        if (songMenu.getAuthority() < 0)
+            throw new ServiceException("歌曲状态异常（删除/封禁），无法上传封面");
+        if (!songMenu.getUserId().equals(UserInfo.get()))
+            throw new ServiceException("当前用户无权限修改他人歌曲");
+        try {
+            if (originFileName != null) {
+                index = originFileName.lastIndexOf('.');
+                prefix = originFileName.substring(index + 1);
+                if (index <= 0 || !prefix.equals("jpg"))
+                    throw new ServiceException("歌单封面格式错误（只能为jpg）");
+            } else {
+                throw new ServiceException("文件名错误（不能为空）");
+            }
+            String randomFileName = UUID.randomUUID().toString();               //服务器本地歌单封面随机
+            newFileName = menuCoverBaseUrl + randomFileName + '.' + prefix;             //重构图片名
+            localFile = new File(newFileName);
+            songMenuCoverFile.transferTo(localFile);
+            songMenu.setCoverPicture(newFileName);                             //修改封面
+
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new ServiceException(ex.getMessage());
+        }
+        return songMenuMapper.updateById(songMenu) > 0;
+
+
+    }
+
     private SongMenu getSongMenuById(long songMenuId){
         SongMenu songMenuInfo = songMenuMapper.selectById(songMenuId);
         if(songMenuInfo == null){

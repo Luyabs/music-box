@@ -7,6 +7,7 @@ import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.common.exception.ServiceException;
 import com.example.musicbox.entity.AbstractUser;
 import com.example.musicbox.entity.Creator;
+import com.example.musicbox.entity.Song;
 import com.example.musicbox.entity.User;
 import com.example.musicbox.entity.relation.UserSubscription;
 import com.example.musicbox.mapper.AbstractUserMapper;
@@ -17,11 +18,15 @@ import com.example.musicbox.mapper.relation.UserSubscriptionMapper;
 import com.example.musicbox.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -37,6 +42,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private AdministratorMapper administratorMapper;
+
+    @Value("${file-url.avatar-base-url}")
+    private String avatarBaseUrl;   //头像上传地址
 
     @Override
     public String login(String username, String password) {
@@ -210,4 +218,50 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User newUser = new User().setId(user.getId()).setStatus(user.getStatus());  //此处只允许修改用户状态
         return userMapper.updateById(newUser) > 0;
     }
+
+    @Override
+    public boolean upLoadUserAvatar(MultipartFile userAvatarFile, Long userID){
+        new File(avatarBaseUrl).mkdirs();  // 没有文件夹就创一个
+        String originFileName = userAvatarFile.getOriginalFilename();   //原文件名
+        String newFileName;      //新文件名
+        String prefix;           //后缀名
+        File localFile;          //本地文件对象
+        int index;
+        User user = getUserById(userID);
+        if (user.getStatus() != 0)
+            throw new ServiceException("用户状态异常（删除/封禁），无法上传头像");
+        try {
+            if (originFileName != null) {
+                index = originFileName.lastIndexOf('.');
+                prefix = originFileName.substring(index + 1);
+                if (index <= 0 || !prefix.equals("jpg"))
+                    throw new ServiceException("用户头像格式错误（只能为jpg）");
+            } else {
+                throw new ServiceException("文件名错误（不能为空）");
+            }
+            String randomFileName = UUID.randomUUID().toString();               //服务器本地头像封面随机
+            newFileName = avatarBaseUrl + randomFileName + '.' + prefix;             //重构图片名
+            localFile = new File(newFileName);
+            userAvatarFile.transferTo(localFile);
+            user.setAvatar(newFileName);                                        //修改头像
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            throw new ServiceException(ex.getMessage());
+        }
+        return userMapper.updateById(user) > 0;
+    }
+    /**
+     * 按id获取歌曲 并校验是否为null
+     */
+    private User getUserById(long userId) {
+        User userInfo = userMapper.selectById(userId);
+        if (userInfo == null)
+            throw new ServiceException("不存在id=" + userId + "的歌曲");
+        return userInfo;
+    }
+
+
+
+
+
 }

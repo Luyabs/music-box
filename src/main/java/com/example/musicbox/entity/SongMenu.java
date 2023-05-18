@@ -28,6 +28,9 @@ public class SongMenu {
     @ApiModelProperty("歌单简介")
     private String menuIntroduction;
 
+    @ApiModelProperty("歌单封面")
+    private String coverPicture;
+
     @ApiModelProperty("是否专辑")
     private Boolean isAlbum;
 

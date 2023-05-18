@@ -20,15 +20,14 @@ public class MenuMyController {
     @Autowired
     private SongMenuService songMenuService;
 
-    @ApiOperation(value = "上传歌歌单封面",notes = "[token]需传入MultipartFile文件流")
+    @ApiOperation(value = "上传歌单封面",notes = "[token]需传入MultipartFile文件流")
     @NeedToken
     @PostMapping("/cover")
-    public Result upLoadSongCover(@RequestPart MultipartFile songMenuCover, @RequestParam long songMenuId){
-        //TODO: TODOTODO
-        //boolean res = songMenuService.upLoadSongCover(songCoverFile,songMenuId);
-        //TODO: TODOTODO
-        //return res ?Result.success().message("上传歌单封面成功"):Result.error().message("上传歌单封面失败");
-        return Result.error();
+    public Result upLoadSongCover(@RequestPart MultipartFile songMenuCoverFile, @RequestParam long songMenuId){
+
+        boolean res = songMenuService.upLoadSongMenuCover(songMenuCoverFile,songMenuId);
+        return res ?Result.success().message("上传歌单封面成功"):Result.error().message("上传歌单封面失败");
+
     }
 
     @NeedToken

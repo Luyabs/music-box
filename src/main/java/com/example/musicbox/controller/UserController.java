@@ -2,6 +2,7 @@ package com.example.musicbox.controller;
 
 import com.example.musicbox.common.NeedToken;
 import com.example.musicbox.common.Result;
+import com.example.musicbox.common.UserInfo;
 import com.example.musicbox.entity.Creator;
 import com.example.musicbox.entity.User;
 import com.example.musicbox.service.UserService;
@@ -20,15 +21,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @ApiOperation(value = "上传用户头像",notes = "[token]需传入MultipartFile文件流")
+    @ApiOperation(value = "上传用户头像",notes = "[token]需传入MultipartFile文件流,可以覆盖掉旧的头像")
     @NeedToken
     @PostMapping("/avatar")
-    public Result upLoadSongCover(@RequestPart MultipartFile avatar){
-        //TODO: TODOTODO
-        //boolean res = songMenuService.upLoadSongCover(songCoverFile,songMenuId);
-        //TODO: TODOTODO
-        //return res ?Result.success().message("上传歌单封面成功"):Result.error().message("上传歌单封面失败");
-        return Result.error();
+    public Result upLoadSongCover(@RequestPart MultipartFile avatarFile){
+
+        boolean res = userService.upLoadUserAvatar(avatarFile, UserInfo.get());
+        return res ?Result.success().message("上传（修改）用户头像成功"):Result.error().message("上传（修改）用户头像失败");
     }
 
     @ApiOperation(value = "登录", notes = "使用用户名 + 密码进行登录")

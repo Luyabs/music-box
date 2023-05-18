@@ -3,6 +3,7 @@ package com.example.musicbox.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.musicbox.entity.Creator;
 import com.example.musicbox.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -30,4 +31,6 @@ public interface UserService extends IService<User> {
     Map<String, Object> getUserInfoAdmin(long id);  //[管理员] 获取指定用户信息
 
     boolean changeUserStatus(User user);
+
+    boolean upLoadUserAvatar(MultipartFile userAvatarFile, Long userID);       //上传（修改）用户头像
 }
