@@ -109,7 +109,13 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
         String prefix;           //后缀名
         File localFile;          //本地文件对象
         int index;
-        Song song;
+
+        Song song = getSongById(songID);
+        if (song.getStatus() < 0)
+            throw new ServiceException("歌曲状态异常（删除/封禁），无法上传封面");
+        if (!song.getUserId().equals(UserInfo.get()))
+            throw new ServiceException("当前用户无权限修改他人歌曲");
+
         try {
             if (originFileName != null) {
                 index = originFileName.lastIndexOf('.');
@@ -123,13 +129,13 @@ public class SongServiceImpl extends ServiceImpl<SongMapper, Song> implements So
             newFileName = coverBaseUrl + randomFileName + '.' + prefix;             //重构图片名
             localFile = new File(newFileName);
             songCoverFile.transferTo(localFile);
-            song = getSongById(songID);
-            if (song.getStatus() < 0)
-                throw new ServiceException("歌曲状态异常（删除/封禁），无法上传封面");
-            if (!song.getUserId().equals(UserInfo.get()))
-                throw new ServiceException("当前用户无权限修改他人歌曲");
-            else
-                song.setCoverPicture(newFileName);                              //若当前用户是歌曲的创建者，修改封面
+            //song = getSongById(songID);
+//            if (song.getStatus() < 0)
+//                throw new ServiceException("歌曲状态异常（删除/封禁），无法上传封面");
+//            if (!song.getUserId().equals(UserInfo.get()))
+//                throw new ServiceException("当前用户无权限修改他人歌曲");
+//            else
+            song.setCoverPicture(newFileName);                              //修改封面
 
         } catch (Exception ex) {
             log.error(ex.getMessage());
