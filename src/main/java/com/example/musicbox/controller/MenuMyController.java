@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Api("歌单/我的")
@@ -18,6 +19,17 @@ import org.springframework.web.bind.annotation.*;
 public class MenuMyController {
     @Autowired
     private SongMenuService songMenuService;
+
+    @ApiOperation(value = "上传歌歌单封面",notes = "[token]需传入MultipartFile文件流")
+    @NeedToken
+    @PostMapping("/cover")
+    public Result upLoadSongCover(@RequestPart MultipartFile songMenuCover, @RequestParam long songMenuId){
+        //TODO: TODOTODO
+        //boolean res = songMenuService.upLoadSongCover(songCoverFile,songMenuId);
+        //TODO: TODOTODO
+        //return res ?Result.success().message("上传歌单封面成功"):Result.error().message("上传歌单封面失败");
+        return Result.error();
+    }
 
     @NeedToken
     @ApiOperation(value = "分页获取自己创建的歌单信息", notes = "page_number, page_size, *条件 允许根据menu_name与menu_introduction进行查询")

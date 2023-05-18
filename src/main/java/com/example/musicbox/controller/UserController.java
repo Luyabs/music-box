@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -18,6 +19,17 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @ApiOperation(value = "上传用户头像",notes = "[token]需传入MultipartFile文件流")
+    @NeedToken
+    @PostMapping("/avatar")
+    public Result upLoadSongCover(@RequestPart MultipartFile avatar){
+        //TODO: TODOTODO
+        //boolean res = songMenuService.upLoadSongCover(songCoverFile,songMenuId);
+        //TODO: TODOTODO
+        //return res ?Result.success().message("上传歌单封面成功"):Result.error().message("上传歌单封面失败");
+        return Result.error();
+    }
 
     @ApiOperation(value = "登录", notes = "使用用户名 + 密码进行登录")
     @PostMapping("/login")

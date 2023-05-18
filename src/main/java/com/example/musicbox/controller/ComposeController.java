@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -24,26 +25,26 @@ public class ComposeController {
     private AlbumService albumService;
 
     /**
-     * ! 本项目已将动态文件传输部分分离到另一个项目(端口7070, 可通过代理8000端口访问)中 可在src/main/resources/music-box-file-exchanging.zip中查看
+     * 本项目取消将动态文件传输部分分离到另一个项目(端口7070, 可通过代理8000端口访问)中 可在src/main/resources/music-box-file-exchanging.zip中查看
      */
-/*
+
     @ApiOperation(value = "上传歌曲",notes = "[token] 需传入MultipartFile文件流")
     @NeedToken
     @PostMapping("/music")
-    public Result upLoadSongFile(@RequestPart("songFile")MultipartFile songFile){
+    public Result upLoadSongFile(@RequestPart("songFile") MultipartFile songFile){
 
         boolean res = songService.upLoadSongFile(songFile);
         return res?Result.success().message("上传歌曲文件成功"):Result.error().message("上传歌曲文件失败");
     }
+
     @ApiOperation(value = "上传歌曲封面",notes = "[token]需传入MultipartFile文件流")
     @NeedToken
     @PostMapping("/cover")
-    public Result upLoadSongCover(@RequestPart("songCoverFile")MultipartFile songCoverFile, @RequestParam String songID){
+    public Result upLoadMenuCover(@RequestPart("songCoverFile")MultipartFile songCoverFile, @RequestParam String songID){
         Long songId  = Long.parseLong(songID);
         boolean res = songService.upLoadSongCover(songCoverFile,songId);
         return res?Result.success().message("上传歌曲封面成功"):Result.error().message("上传歌曲封面失败");
     }
-*/
 
     @ApiOperation(value = "分页获取自己上传的歌曲",notes = "[token]需要传入页号，页大小，查询条件")
     @NeedToken

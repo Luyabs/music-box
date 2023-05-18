@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RestController
 @Api("歌曲")
@@ -35,9 +37,9 @@ public class SongController {
     }
 
     /**
-     * ! 本项目已将动态文件传输部分分离到另一个项目(端口7070, 可通过代理8000端口访问)中 可在src/main/resources/music-box-file-exchanging.zip中查看
+     * 本项目取消将动态文件传输部分分离到另一个项目(端口7070, 可通过代理8000端口访问)中 可在src/main/resources/music-box-file-exchanging.zip中查看
      */
-/*    @ApiOperation(value = "播放指定id歌曲 [未登录状态]", notes = "请直接在浏览器输入URL来测试这项 [无法下载VIP歌曲]")
+    @ApiOperation(value = "播放指定id歌曲 [未登录状态]", notes = "请直接在浏览器输入URL来测试这项 [无法下载VIP歌曲]")
     @GetMapping("/play/guest/{song_id}")
     public void playSongGuest(@PathVariable("song_id") long songId, HttpServletResponse response) {
         songService.playSongGuest(songId, response);
@@ -62,7 +64,7 @@ public class SongController {
     @GetMapping("/download/logged/{song_id}")
     public void downloadSongLogged(@PathVariable("song_id") long songId, HttpServletResponse response) {
         songService.downloadSongLogged(songId, response);
-    }*/
+    }
     @ApiOperation(value = "发表对指定歌曲的评论", notes = "[token] {song_id}, content")
     @PostMapping(value = "/comment/{song_id}")
     @NeedToken
