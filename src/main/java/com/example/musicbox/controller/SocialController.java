@@ -51,8 +51,10 @@ public class SocialController {
     @ApiOperation(value = "查询自己对指定用户的聊天记录", notes = "[token] {user_id}")
     @GetMapping("/message/{user_id}")
     @NeedToken
-    public Result getUserChatRecords(@PathVariable long user_id) {
-        return Result.success().data("list", socialService.getUserChatRecords(user_id));
+    public Result getUserChatRecords(@RequestParam(defaultValue = "1") int currentPage,
+                                     @RequestParam(defaultValue = "10") int pageSize,
+                                     @PathVariable long user_id) {
+        return Result.success().data("page", socialService.getUserChatRecords(currentPage, pageSize, user_id));
     }
 
     @ApiOperation(value = "删除指定的聊天记录", notes = "[token] {chat_id}")

@@ -16,9 +16,6 @@ import com.example.musicbox.service.SocialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class SocialServiceImpl extends ServiceImpl<UserMapper, User> implements SocialService {
     @Autowired
@@ -69,11 +66,20 @@ public class SocialServiceImpl extends ServiceImpl<UserMapper, User> implements 
     }
 
     @Override
-    public List<UserChat> getUserChatRecords(long userId) {
+    public Page<UserChat> getUserChatRecords(int currentPage, int pageSize, long userId) {
         long myId = UserInfo.get();
-        QueryWrapper<UserChat> wrapper = new QueryWrapper<UserChat>().eq("sender_id", myId).eq("receiver_id", userId).orderByDesc("update_time");
-        List<UserChat> list = userChatMapper.selectList(wrapper);
-        return list;
+        QueryWrapper<UserChat> wrapper = new QueryWrapper<UserChat>()
+                .and(w -> {
+                    w.eq("receiver_id", userId)
+                            .eq("sender_id", myId)
+                            .or()
+                            .eq("sender_id", userId)
+                            .eq("receiver_id", myId);
+                })
+                .orderByDesc("update_time")
+                .eq("status", 0);
+        Page<UserChat> userChatPage = userChatMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
+        return userChatPage;
     }
 
     @Override

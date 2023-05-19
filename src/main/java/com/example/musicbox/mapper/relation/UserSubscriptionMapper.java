@@ -7,10 +7,7 @@ import com.example.musicbox.entity.User;
 import com.example.musicbox.entity.relation.UserSubscription;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
-
-import java.util.List;
 
 @Mapper
 public interface UserSubscriptionMapper extends BaseMapper<UserSubscription> {
@@ -25,7 +22,6 @@ public interface UserSubscriptionMapper extends BaseMapper<UserSubscription> {
             (select followed_id 
             from subscription_user s 
             where s.follower_id=#{userId})
-            order by s.update_time
             """)
     IPage<User> selectUserFollowed(@Param("userId") long userId, Page<User> page);
 
@@ -42,7 +38,6 @@ public interface UserSubscriptionMapper extends BaseMapper<UserSubscription> {
             (select follower_id 
             from subscription_user s
             where s.followed_id=#{userId})
-            order by s.update_time
             """)
     IPage<User> selectUserFollower(@Param("userId")long userId, Page<User> page);
 
