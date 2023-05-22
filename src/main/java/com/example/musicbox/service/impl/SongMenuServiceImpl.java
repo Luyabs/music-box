@@ -150,7 +150,12 @@ public class SongMenuServiceImpl extends ServiceImpl<SongMenuMapper, SongMenu> i
      */
     @Override
     public boolean saveSongMenu(SongMenu songMenu) {
-        songMenu.setUserId(UserInfo.get()).setAuthority(0).setIsAlbum(false).setCreateTime(null);
+        songMenu.setId(null).
+                setUserId(UserInfo.get()).
+                setAuthority(0).
+                setIsAlbum(false).
+                setCreateTime(null).
+                setCoverPicture("/home/music-box/resources/menu-cover/no_picture_yet.jpg");
         return songMenuMapper.insert(songMenu) > 0;
     }
 
