@@ -21,6 +21,47 @@ spring:
 file-url:
   song-base-url:  D:/tmp/music/
   cover-base-url:  D:/tmp/cover/
+  menu-cover-base-url: D:/tmp/menu-cover/
+  avatar-base-url: D:/tmp/avatar/
+```
+
+## 部署须知
+1. 本项目提供DockerFile做容器化部署，DockerFile位置: src/main/resources/bash/docker-deployment/Dockerfile
+2. 若不会使用Docker，请阅读并使用bash部署，位置: src/main/resources/bash/regular-deployment
+3. DockerFile具体使用方法: 
+```shell
+# [必须] 先maven package得到music-box-0.0.1-SNAPSHOT.jar
+mkdir -p /home/music-box/backend
+cd  /home/music-box/backend
+# [必须] 此时需要传输文件music-box-0.0.1-SNAPSHOT.jar与Dockerfile到/home/music-box/backend
+docker build -t music-box-backend .
+# [可选] run - main 如果你不需要文件上传下载服务 运行这个
+docker run -p 8080:8080 --name music-box-backend-main-01 -d music-box-backend
+# [推荐] run - with file 如果你需要完整的文件上传下载服务 运行这个
+docker run -p 7070:8080 \
+-v /home/music-box/resources/song:/home/music-box/resources/song \
+-v /home/music-box/resources/cover:/home/music-box/resources/cover \
+-v /home/music-box/resources/menu-cover:/home/music-box/resources/menu-cover \
+-v /home/music-box/resources/avatar:/home/music-box/resources/avatar \
+--name music-box-backend-file-01 \
+-d music-box-backend
+```
+4. 如果你想实现如下图所示的分布式结构，请配置nginx。如果使用容器部署nginx，请务必这样创建nginx容器，以确保目录被挂载成功(你还需多创建几个music-box-backend容器，并将src/main/resources/nginx-conf中的配置文件复制到/home/nginx/conf/nginx.conf中：
+```shell
+docker run \
+-p 9000:9000 \
+-p 8000:8000 \
+--name nginx-music-box \
+-v /home/nginx/conf/nginx.conf:/etc/nginx/nginx.conf \
+-v /home/nginx/conf/conf.d:/etc/nginx/conf.d \
+-v /home/nginx/log:/var/log/nginx \
+-v /home/nginx/html:/usr/share/nginx/html \
+-v /home/music-box/frontend/dist:/home/music-box/frontend/dist \
+-v /home/music-box/resources/cover:/home/music-box/resources/cover \
+-v /home/music-box/resources/avatar:/home/music-box/resources/avatar \
+-v /home/music-box/resources/menu-cover:/home/music-box/resources/menu-cover \
+-v /home/music-box/logs:/home/music-box/logs \
+-d nginx:latest
 ```
 
 ## 项目结构
