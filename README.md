@@ -1,7 +1,11 @@
 # music-box (backend)
 
 ## Api文档路径
-http://localhost:8080/doc.html      
+http://124.70.195.38:8000/doc.html   
+(此端口由nginx提供反代理服务)   
+
+## 项目前端入口
+http://124.70.195.38:9000/#/login   
 
 ## 运行前须知
 1. 需要在/src/main/resources下追新增一个文件: application-dev.yaml
@@ -26,6 +30,7 @@ file-url:
 ```
 
 ## 部署须知
+```说明可能写的有不完善之处，如果你碰到难以处理的问题或有bug，请及时提交issue告诉我，收到后会给出反馈```
 1. 本项目提供DockerFile做容器化部署，DockerFile位置: src/main/resources/bash/docker-deployment/Dockerfile
 2. 若不会使用Docker，请阅读并使用bash部署，位置: src/main/resources/bash/regular-deployment
 3. DockerFile具体使用方法: 
@@ -35,9 +40,9 @@ mkdir -p /home/music-box/backend
 cd  /home/music-box/backend
 # [必须] 此时需要传输文件music-box-0.0.1-SNAPSHOT.jar与Dockerfile到/home/music-box/backend
 docker build -t music-box-backend .
-# [可选] run - main 如果你不需要文件上传下载服务 运行这个
+# [可选] run - main 如果你不需要文件上传下载服务 运行这个(记得调整端口号和容器名)
 docker run -p 8080:8080 --name music-box-backend-main-01 -d music-box-backend
-# [推荐] run - with file 如果你需要完整的文件上传下载服务 运行这个
+# [推荐] run - with file 如果你需要完整的文件上传下载服务 运行这个(记得调整端口号和容器名)
 docker run -p 7070:8080 \
 -v /home/music-box/resources/song:/home/music-box/resources/song \
 -v /home/music-box/resources/cover:/home/music-box/resources/cover \
@@ -63,6 +68,7 @@ docker run \
 -v /home/music-box/logs:/home/music-box/logs \
 -d nginx:latest
 ```
+![G4XR%0EG`2N}E6E} SXXXA3](https://github.com/Luyabs/music-box/assets/74538732/e13259a6-b5df-44f1-8690-655bd27f5d81)
 
 ## 项目结构
 | 项目结构           |                           |                        | 描述              | 功能                                                              |
